@@ -1,0 +1,90 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Audio Noise Cancellation System Design">
+    <mxGraphModel dx="923" dy="617" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="Data Collection Layer" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="20" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="Microphones (Real-time Audio)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="120" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="Pre-recorded Audio" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="200" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="Noise Types" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="280" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="Pre-processing Layer" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="160" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="Feature Extraction (STFT, MFCC)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="280" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="Noise Type Identification" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="360" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="Algorithm Implementation Layer" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="740" y="220" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="Spectral Subtraction" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="300" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="Wiener Filter" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="380" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="Deep Noise Suppression" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="460" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="Beamforming (MVDR)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="540" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="Kalman Filter" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="620" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="Neural Network-based Suppression" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="700" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="Processing &amp; Evaluation Layer" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="160" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="Noise Suppression" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="300" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="Evaluation Metrics (SNR, PESQ, MOS)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="380" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="Execution Time" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="460" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="Memory Usage" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="540" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="Results &amp; Comparison Layer" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="160" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="Performance Analysis" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="300" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="Result Visualization" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="380" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="Output Logs" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="460" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="User Interface Layer (Optional)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1760" y="160" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="26" value="Dashboard" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="300" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="27" value="Control Panel" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="380" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="28" value="Storage Layer" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="720" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="29" value="Audio Storage" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="820" width="160" height="60" as="geometry" />
+        </mxCell>
