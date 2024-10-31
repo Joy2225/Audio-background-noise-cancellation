@@ -1,37 +1,31 @@
+from scipy.io import wavfile
+import noisereduce as nr
 import numpy as np
-from scipy.signal import lfilter
-import librosa
-import soundfile as sf
+from scipy.signal import resample
 
-def kalman_filter(data, R, Q):
+# Load data
+rate, data = wavfile.read("noisefunkguitare.wav")
+print(f"Sample rate: {rate}, Data shape: {data.shape}")
 
+# Downsample if sample rate is very high (e.g., above 44.1 kHz)
+# target_rate = 22050  # Target sample rate for lower memory use
+# if rate > target_rate:
+#     data = resample(data, int(len(data) * target_rate / rate))
+#     rate = target_rate
 
-    x_hat = np.zeros_like(data)  
-    P = np.zeros_like(data)     
+# Noise reduction parameters to reduce memory usage
+n_fft = 2048  # FFT size
+win_length = 512  # Window length
 
-    # Kalman filter iteration
-    for k in range(1, len(data)):
-        # Prediction step
-        x_hat_pred = x_hat[k - 1]
-        P_pred = P[k - 1] + Q
+# Process each channel separately if stereo, or directly if mono
+if len(data.shape) > 1:  # Stereo
+    reduced_noise = np.array([nr.reduce_noise(y=data[:, i], sr=rate, n_fft=n_fft, win_length=win_length) 
+                              for i in range(data.shape[1])]).T
+else:  # Mono
+    reduced_noise = nr.reduce_noise(y=data, sr=rate, n_fft=n_fft, win_length=win_length)
 
-        # Measurement update step
-        K = P_pred / (P_pred + R)
-        x_hat[k] = x_hat_pred + K * (data[k] - x_hat_pred)
-        P[k] = (1 - K) * P_pred
+# Convert to int16 for WAV output
+reduced_noise = np.int16(reduced_noise / np.max(np.abs(reduced_noise)) * 32767)
 
-    return x_hat
-
-
-if __name__ == "__main__":
-    # Load MP3 audio data
-    audio_data, fs = librosa.load("./noisy_audio.mpeg")
-
-
-    R = 0.01  
-    Q = 0.001 
-
-
-    filtered_audio = kalman_filter(audio_data, R, Q)
-
-    sf.write("filtered_audio.wav", filtered_audio, fs)
+# Write the result to a file
+wavfile.write("mywav_reduced_noise.wav", rate, reduced_noise)
