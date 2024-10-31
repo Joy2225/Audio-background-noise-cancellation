@@ -8,6 +8,7 @@ dependencies = [
     "audioread>=3.0.1",
     "librosa>=0.10.2.post1",
     "matplotlib>=3.9.2",
+    "noisereduce>=3.0.3",
     "numpy>=2.0.2",
     "pydub>=0.25.1",
     "pywavelets>=1.7.0",
