@@ -20,25 +20,9 @@ def halfwave_rectification(array):
 
 
 class Wiener:
-    """
-    Class made for wiener filtering based on the article "Improved Signal-to-Noise Ratio Estimation for Speech
-    Enhancement".
-
-    Reference :
-        Cyril Plapous, Claude Marro, Pascal Scalart. Improved Signal-to-Noise Ratio Estimation for Speech
-        Enhancement. IEEE Transactions on Audio, Speech and Language Processing, Institute of Electrical
-        and Electronics Engineers, 2006.
-        
-    """
 
     def __init__(self, WAV_FILE, *T_NOISE):
-        """
-        Input :
-            WAV_FILE
-            T_NOISE : float, Time in seconds /!\ Only works if stationnary noise is at the beginning of x /!\
-            
-        """
-        # Constants are defined here
+
         self.WAV_FILE, self.T_NOISE = WAV_FILE, T_NOISE
         self.FS, self.x = wav.read(self.WAV_FILE + '.wav')
         self.NFFT, self.SHIFT, self.T_NOISE = 2**10, 0.5, T_NOISE
@@ -134,7 +118,7 @@ class Wiener:
         s_est = np.zeros(self.x.shape)
         for channel in self.channels:
             for frame in self.frames:
-                ############# Initialising Frame ###################################
+                # Initialising Frame 
                 # Temporal framing with a Hanning window
                 i_min, i_max = frame*self.OFFSET, frame*self.OFFSET + self.FRAME
                 x_framed = self.x[i_min:i_max, channel]*self.WINDOW
@@ -142,13 +126,13 @@ class Wiener:
                 # Zero padding x_framed
                 X_framed = fft(x_framed, self.NFFT)
 
-                ############# Wiener Filter ########################################
+                # Wiener Filter 
                 # Apply a priori wiener gains G to X_framed to get output S
                 SNR_post = (np.abs(X_framed)**2/self.EW)/self.Sbb[:, channel]
                 G = Wiener.a_priori_gain(SNR_post)
                 S = X_framed * G
 
-                ############# Temporal estimated Signal ############################
+                # Temporal estimated Signal
                 # Estimated signals at each frame normalized by the shift value
                 temp_s_est = np.real(ifft(S)) * self.SHIFT
                 s_est[i_min:i_max, channel] += temp_s_est[:self.FRAME]  # Truncating zero padding
@@ -159,8 +143,7 @@ class Wiener:
         Function that returns the estimated speech signals using overlapp - add method
         by applying a Two Step Noise Reduction on each frame (s_est_tsnr) to the noised input signal (x).
         
-            Output :
-                s_est_tsnr, s_est_hrnr : 1D np.array, 1D np.array
+            Output : s_est_tsnr, s_est_hrnr : 1D np.array, 1D np.array
                 
         """
         # Typical constant used to determine SNR_dd_prio
@@ -174,7 +157,7 @@ class Wiener:
         S = np.zeros((2, self.NFFT), dtype='cfloat')
         for channel in self.channels:
             for frame in self.frames:
-                ############# Initialising Frame ###################################
+                # Initialising Frame 
                 # Temporal framing with a Hanning window
                 i_min, i_max = frame*self.OFFSET, frame*self.OFFSET + self.FRAME
                 x_framed = self.x[i_min:i_max, channel]*self.WINDOW
@@ -182,30 +165,30 @@ class Wiener:
                 # Zero padding x_framed
                 X_framed = fft(x_framed, self.NFFT)
 
-                ############# Wiener Filter ########################################
+                # Wiener Filter
                 # Computation of spectral gain G using SNR a posteriori
                 SNR_post = np.abs(X_framed)**2/self.EW/self.Sbb[:, channel]
                 G = Wiener.a_priori_gain(SNR_post)
                 S[0, :] = G * X_framed
 
-                ############# Directed Decision ####################################
+                # Directed Decision
                 # Computation of spectral gain G_dd using output S of Wiener Filter
                 SNR_dd_prio = beta*np.abs(S[-1, :])**2/self.Sbb[:, channel] + (1 - beta)*halfwave_rectification(SNR_post - 1)
                 G_dd = Wiener.a_priori_gain(SNR_dd_prio)
                 S_dd = G_dd * X_framed
 
-                ############# Two Step Noise Reduction #############################
+                # Two Step Noise Reduction
                 # Computation of spectral gain G_tsnr using output S_dd of Directed Decision
                 SNR_tsnr_prio = np.abs(S_dd)**2/self.Sbb[:, channel]
                 G_tsnr = Wiener.a_priori_gain(SNR_tsnr_prio)
                 S_tsnr = G_tsnr * X_framed
 
-                ############# Temporal estimated Signal ############################
+                # Temporal estimated Signal
                 # Estimated signal at frame normalized by the shift value
                 temp_s_est_tsnr = np.real(ifft(S_tsnr))*self.SHIFT
                 s_est_tsnr[i_min:i_max, channel] += temp_s_est_tsnr[:self.FRAME] # Truncating zero padding
 
-                ############# Update ###############################################
+                # Update
                 # Rolling matrix to update old values (Circshift in Matlab)
                 S = np.roll(S, 1, axis=0)
         wav.write(self.WAV_FILE+'_wiener_two_step.wav', self.FS,s_est_tsnr/s_est_tsnr.max() )

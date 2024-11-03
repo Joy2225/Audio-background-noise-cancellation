@@ -1,6 +1,3 @@
-"""
-Class to create a noise profile from an audio input
-"""
 import math
 
 import matplotlib.pyplot as plt

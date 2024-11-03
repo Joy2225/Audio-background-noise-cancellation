@@ -1,9 +1,3 @@
-"""
-A python linked list implementation
-relying on http://ls.pwd.io/2014/08/singly-and-doubly-linked-lists-in-python/
-"""
-
-
 class Node:
 
     def __init__(self, data, prev=None, next=None):
