@@ -29,3 +29,5 @@ reduced_noise = np.int16(reduced_noise / np.max(np.abs(reduced_noise)) * 32767)
 
 # Write the result to a file
 wavfile.write("mywav_reduced_noise.wav", rate, reduced_noise)
+
+
