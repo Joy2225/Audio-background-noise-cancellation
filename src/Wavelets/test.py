@@ -1,5 +1,5 @@
 from denoise import AudioDeNoise 
 
-audioDenoiser = AudioDeNoise(inputFile="test_3.wav")
+audioDenoiser = AudioDeNoise(inputFile="test_2.wav")
 audioDenoiser.deNoise(outputFile="test_denoised.wav")
-audioDenoiser.generateNoiseProfile(noiseFile="test_noise_profile.wav")
+audioDenoiser.generateNoiseProfile(noiseFile="test_noise__lalaprofile.wav")
