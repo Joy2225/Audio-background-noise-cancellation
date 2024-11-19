@@ -1,17 +1,22 @@
+import psutil
+import os
 from scipy.io import wavfile
 import noisereduce as nr
 import numpy as np
 from scipy.signal import resample
+import time
 
+process = psutil.Process(os.getpid())
+start=time.time()
 # Load data
 rate, data = wavfile.read("noisefunkguitare.wav")
 print(f"Sample rate: {rate}, Data shape: {data.shape}")
 
 # Downsample if sample rate is very high (e.g., above 44.1 kHz)
-# target_rate = 22050  # Target sample rate for lower memory use
-# if rate > target_rate:
-#     data = resample(data, int(len(data) * target_rate / rate))
-#     rate = target_rate
+target_rate = 22050  # Target sample rate for lower memory use
+if rate > target_rate:
+    data = resample(data, int(len(data) * target_rate / rate))
+    rate = target_rate
 
 # Noise reduction parameters to reduce memory usage
 n_fft = 2048  # FFT size
@@ -29,5 +34,6 @@ reduced_noise = np.int16(reduced_noise / np.max(np.abs(reduced_noise)) * 32767)
 
 # Write the result to a file
 wavfile.write("mywav_reduced_noise.wav", rate, reduced_noise)
-
-
+end=time.time()
+print(f"Time taken: {end-start} seconds")
+print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")

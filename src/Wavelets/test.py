@@ -1,5 +1,8 @@
 from denoise import AudioDeNoise 
+import time
 
-audioDenoiser = AudioDeNoise(inputFile="test_2.wav")
+start=time.time()
+audioDenoiser = AudioDeNoise(inputFile="noisefunkguitare.wav")
 audioDenoiser.deNoise(outputFile="test_denoised.wav")
-audioDenoiser.generateNoiseProfile(noiseFile="test_noise__lalaprofile.wav")
+end=time.time()
+print(f"Time taken: {end-start} seconds")
