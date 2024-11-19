@@ -32,7 +32,7 @@ class Wiener:
         self.OFFSET = int(self.SHIFT*self.FRAME)
 
         # Hanning window and its energy Ew
-        self.WINDOW = sg.hann(self.FRAME)
+        self.WINDOW = sg.windows.hann(self.FRAME)
         self.EW = np.sum(self.WINDOW)
 
         self.channels = np.arange(self.x.shape[1]) if self.x.shape != (self.x.size,)  else np.arange(1)
@@ -154,7 +154,7 @@ class Wiener:
 
         # Initialising matrix to store previous values.
         # For readability purposes, -1 represents past frame values and 0 represents actual frame values.
-        S = np.zeros((2, self.NFFT), dtype='cfloat')
+        S = np.zeros((2, self.NFFT), dtype='complex64')
         for channel in self.channels:
             for frame in self.frames:
                 # Initialising Frame 
