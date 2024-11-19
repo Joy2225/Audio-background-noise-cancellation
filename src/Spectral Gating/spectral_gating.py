@@ -48,6 +48,11 @@ def si_snr(estimate, reference, epsilon=1e-8):
 rate, data = wavfile.read("noisefunkguitare.wav")
 print(f"Sample rate: {rate}, Data shape: {data.shape}")
 
+# Convert to mono if audio is stereo
+if len(data.shape) > 1:  # Stereo
+    print("Converting stereo to mono...")
+    data = np.mean(data, axis=1)
+
 # Downsample if sample rate is very high (e.g., above 44.1 kHz)
 target_rate = 16000  # Target sample rate for lower memory use
 if rate > target_rate:
