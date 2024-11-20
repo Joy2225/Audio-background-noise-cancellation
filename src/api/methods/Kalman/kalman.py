@@ -23,6 +23,8 @@ def kalman_filter_denoising(audio, process_noise=1e-5, measurement_noise=1e-2):
     Returns:
     - denoised_audio: numpy array, the denoised audio signal.
     """
+    process = psutil.Process(os.getpid())
+    start = time.time()
     n = len(audio)
     denoised_audio = np.zeros(n)
 
@@ -43,8 +45,9 @@ def kalman_filter_denoising(audio, process_noise=1e-5, measurement_noise=1e-2):
         p = (1 - k) * p_prior
 
         denoised_audio[i] = x_hat
+    end = time.time()
 
-    return denoised_audio
+    return denoised_audio, {"Execution Time": end - start, "Memory Usage(MB)": process.memory_info().rss / 1024 ** 2}
 
 # SI-SNR computation
 def compute_si_snr(reference, enhanced):

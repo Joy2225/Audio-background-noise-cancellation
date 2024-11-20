@@ -79,11 +79,12 @@ def halfwave_rectification(array):
 
 
 # Wiener class
-class Wiener:
-    def __init__(self, WAV_FILE, *T_NOISE):
-        self.WAV_FILE, self.T_NOISE = WAV_FILE, T_NOISE
-        self.FS, self.x = wav.read(self.WAV_FILE + '.wav')
-
+class Weiner:
+    def __init__(self, audio, sr, *T_NOISE):
+        self.T_NOISE =  T_NOISE
+        self.FS, self.x = sr, audio
+        self.process = psutil.Process(os.getpid())
+        self.start = time.time()
         # Ensure mono signal
         if self.x.ndim > 1:
             self.x = self.x.mean(axis=1)
@@ -120,7 +121,7 @@ class Wiener:
             Sbb = frame * Sbb / (frame + 1) + np.abs(X_framed)**2 / (frame + 1)
         return Sbb
 
-    def wiener(self):
+    def weiner(self):
         s_est = np.zeros(self.x.shape)  # Initialize enhanced signal
         for frame in self.frames:
             i_min, i_max = frame * self.OFFSET, frame * self.OFFSET + self.FRAME
@@ -129,7 +130,7 @@ class Wiener:
 
             # Wiener filter
             SNR_post = (np.abs(X_framed)**2 / self.EW) / self.Sbb
-            G = Wiener.a_priori_gain(SNR_post)
+            G = Weiner.a_priori_gain(SNR_post)
             S = X_framed * G
 
             # Temporal estimated signal
@@ -140,10 +141,12 @@ class Wiener:
         s_est = s_est / np.abs(s_est).max()  # Normalize to [-1, 1]
 
         # Metrics evaluation
-        metrics(self.x, s_est, self.FS)
+        # metrics(self.x, s_est, self.FS)
 
         # Save enhanced audio as 16-bit PCM
-        wav.write(self.WAV_FILE + '_wiener.wav', self.FS, (s_est * 32767).astype(np.int16))
+        # wav.write(self.WAV_FILE + '_wiener.wav', self.FS, (s_est * 32767).astype(np.int16))
+        end = time.time()
+        return (s_est * 32767).astype(np.int16), {"Execution Time": end - self.start, "Memory Usage(MB)": self.process.memory_info().rss / 1024 ** 2}
 
 
 # Main Script
@@ -157,15 +160,15 @@ if __name__ == "__main__":
     noise_begin, noise_end = 0, 1  # Noise interval in seconds
 
     # Initialize the Wiener noise reduction class
-    noised_audio = Wiener(WAV_FILE, noise_begin, noise_end)
+    noised_audio = Weiner(WAV_FILE, noise_begin, noise_end)
 
     # Apply Wiener noise reduction
     print("\nApplying Wiener noise reduction...")
-    noised_audio.wiener()
+    noised_audio.weiner()
 
     # Measure execution time
     end = time.time()
-    print(f"Time taken: {end - start:.2f} seconds for Wiener filter")
+    print(f"Time taken: {end - start:.2f} seconds for Weiner filter")
 
     # Display memory usage
     print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")

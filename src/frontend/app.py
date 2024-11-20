@@ -66,8 +66,8 @@ if st.button("Submit"):
                     st.header("Original Audio")
                     st.subheader("Noise Type:")
                     st.write(noise_type)  # Display noise type
-                    # st.subheader("Metrics:")
-                    # st.table(metrics_data)
+                    st.subheader("Metrics:")
+                    st.table(metrics_data)
 
                     # Display original graphs
                     st.subheader("Original Graphs")
@@ -124,6 +124,19 @@ if st.button("Submit"):
                     # Display denoised graphs
                     st.subheader("Wavelet Denoised Graphs")
                     for filename in ["stft_denoised_wv.png", "psd_denoised_wv.png", "mfcc_denoised_wv.png", "freq_wv.png"]:
+                        st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
+
+                    #Display weiner denoised audio details
+                    st.header("Weiner Denoised Audio")
+                    with zf.open("denoised_audio_weiner.wav") as audio_file:
+                        audio_data = audio_file.read()
+                        st.audio(data=audio_data, format="audio/wav")
+                    st.subheader("Metrics:")
+                    st.table(pd.read_csv(zf.open("metrics_denoised_weiner.csv")))
+
+                    # Display denoised graphs
+                    st.subheader("weiner Denoised Graphs")
+                    for filename in ["stft_denoised_weiner.png", "psd_denoised_weiner.png", "mfcc_denoised_weiner.png", "freq_weiner.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
             else:

@@ -8,7 +8,9 @@ from pesq import pesq
 from mir_eval.separation import bss_eval_sources
 import torch  # Importing PyTorch for tensor operations
 from scipy.io import wavfile
-
+import psutil
+import os
+import time
 SAMPLE_RATE = 16000  # Global constant for target sample rate
 
 
@@ -561,6 +563,7 @@ class AudioDeNoise:
     def __init__(self, audio_data, sr, wavelet="db4", level=2):
         self.audio_data = audio_data
         self.sr = sr
+        self.__noiseProfile = None
         self.wavelet = wavelet
         self.level = level
 
@@ -597,6 +600,8 @@ class AudioDeNoise:
     #     return enhanced_signal
 
     def deNoise(self):
+        process = psutil.Process(os.getpid())
+        start = time.time()
         """Performs noise reduction and returns the denoised audio as a NumPy array."""
         # Wavelet decomposition
         coefficients = pywt.wavedec(self.audio_data, self.wavelet, mode="per", level=self.level)
@@ -610,8 +615,8 @@ class AudioDeNoise:
 
         # Reconstruct the clean signal
         clean_audio = pywt.waverec(coefficients, self.wavelet, mode="per")
-
-        return clean_audio.astype(np.float32)
+        end = time.time()
+        return clean_audio.astype(np.float32), {"Execution Time": end - start, "Memory Usage": process.memory_info().rss / 1024 ** 2}
         # # Resample if needed for PESQ compatibility
         # if rate != self.target_rate:
         #     print(f"Resampling from {rate} Hz to {self.target_rate} Hz for PESQ compatibility...")

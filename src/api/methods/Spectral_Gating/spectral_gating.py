@@ -28,7 +28,8 @@ def compute_si_snr(reference, enhanced):
     return si_snr
 
 def spectral_denoising(data, rate):
-
+    process = psutil.Process(os.getpid())
+    start = time.time()
     # Load data
     # rate, data = wavfile.read("noisefunkguitare.wav")
     print(f"Sample rate: {rate}, Data shape: {data.shape}")
@@ -58,7 +59,8 @@ def spectral_denoising(data, rate):
 
     # Convert to int16 for WAV output
     reduced_noise = np.int16(reduced_noise / np.max(np.abs(reduced_noise)) * 32767)
-    return reduced_noise
+    end = time.time()
+    return reduced_noise, {"Execution Time": end - start, "Memory Usage": process.memory_info().rss / 1024 ** 2}
 
 # Write the result to a file
 # wavfile.write("mywav_reduced_noise.wav", rate, reduced_noise)

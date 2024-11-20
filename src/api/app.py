@@ -17,6 +17,7 @@ from methods.NLM.nlm import non_local_means_denoising
 from methods.Spectral_Gating.spectral_gating import spectral_denoising
 from scipy.io import wavfile
 from methods.Wavelets.denoise import AudioDeNoise
+from methods.Weiner.Weiner import Weiner
 
 # from main import app
 app = Flask(__name__)
@@ -152,32 +153,44 @@ def classify_noise_endpoint():
     stft_buf, psd_buf, mfcc_buf, graph_buf, noise_type = plot_graph(audio, sr,"original")
     try:
         
-        denoised_audio = kalman_filter_denoising(audio)
+        denoised_audio, exe_metrics = kalman_filter_denoising(audio)
         stft_buf_denoised_kl, psd_buf_denoised_kl, mfcc_buf_denoised_kl, freq_kl, _ = plot_graph(denoised_audio, sr, "Kalman")
         metrics_denoised = metrics(audio, denoised_audio, sr)
+        metrics_denoised.update(exe_metrics)
         metrics_denoised_buf_kl = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_kl.csv")
         denoised_audio_bytes_kl = save_audio_to_bytes(denoised_audio, sr)
         
 
-        denoised_audio = non_local_means_denoising(audio)
+        denoised_audio, exe_metrics = non_local_means_denoising(audio)
         stft_buf_denoised_nlm, psd_buf_denoised_nlm, mfcc_buf_denoised_nlm, freq_nlm, _ = plot_graph(denoised_audio, sr, "NLM")
         metrics_denoised = metrics(audio, denoised_audio, sr)
+        metrics_denoised.update(exe_metrics)
         metrics_denoised_buf_nlm = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_nlm.csv")
         denoised_audio_bytes_nlm = save_audio_to_bytes(denoised_audio, sr)
 
 
-        denoised_audio = spectral_denoising(audio, sr)
+        denoised_audio, exe_metrics = spectral_denoising(audio, sr)
         stft_buf_denoised_sg, psd_buf_denoised_sg, mfcc_buf_denoised_sg, freq_sg, _ = plot_graph(denoised_audio, sr, "Spectral Gating")        
         metrics_denoised = metrics(audio, denoised_audio, sr)
+        metrics_denoised.update(exe_metrics)
         metrics_denoised_buf_sg = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_sg.csv")
         denoised_audio_bytes_sg = save_audio_to_bytes(denoised_audio, sr)
 
         denoiser = AudioDeNoise(audio_data=audio, sr=sr)
-        denoised_audio = denoiser.deNoise()
+        denoised_audio, exe_metrics = denoiser.deNoise()
         stft_buf_denoised_wv, psd_buf_denoised_wv, mfcc_buf_denoised_wv, freq_wv, _ = plot_graph(denoised_audio, sr, "Wavelet")
         metrics_denoised = metrics(audio, denoised_audio, sr)
+        metrics_denoised.update(exe_metrics)
         metrics_denoised_buf_wv = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_wv.csv")
         denoised_audio_bytes_wv = save_audio_to_bytes(denoised_audio, sr)
+
+        denoiser = Weiner(audio, sr, 0, 1)
+        denoised_audio, exe_metrics = denoiser.weiner()
+        stft_buf_denoised_weiner, psd_buf_denoised_weiner, mfcc_buf_denoised_weiner, freq_weiner, _ = plot_graph(denoised_audio, sr, "Weiner")  
+        metrics_denoised = metrics(audio, denoised_audio, sr)
+        metrics_denoised.update(exe_metrics)
+        metrics_denoised_buf_weiner = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_weiner.csv")
+        denoised_audio_bytes_weiner = save_audio_to_bytes(denoised_audio, sr)
 
 
 
@@ -220,6 +233,13 @@ def classify_noise_endpoint():
             zf.writestr("mfcc_denoised_wv.png", mfcc_buf_denoised_wv.getvalue())
             zf.writestr("freq_wv.png", freq_wv.getvalue())
             zf.writestr("denoised_audio_wv.wav", denoised_audio_bytes_wv)
+
+            zf.writestr("metrics_denoised_weiner.csv", metrics_denoised_buf_weiner.getvalue())
+            zf.writestr("stft_denoised_weiner.png", stft_buf_denoised_weiner.getvalue())
+            zf.writestr("psd_denoised_weiner.png", psd_buf_denoised_weiner.getvalue())
+            zf.writestr("mfcc_denoised_weiner.png", mfcc_buf_denoised_weiner.getvalue())
+            zf.writestr("freq_weiner.png", freq_weiner.getvalue())
+            zf.writestr("denoised_audio_weiner.wav", denoised_audio_bytes_weiner)
 
 
         zip_buffer.seek(0)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import Weiner as nr
+import weiner as nr
 import psutil
 import os
 import time
