@@ -20,6 +20,7 @@ dependencies = [
     "pystoi>=0.4.1",
     "pywavelets>=1.7.0",
     "soundfile>=0.12.1",
+    "streamlit>=1.40.1",
     "torch>=2.5.1",
     "torchaudio>=2.5.1",
     "tqdm>=4.67.0",
