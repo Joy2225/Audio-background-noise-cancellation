@@ -1,0 +1,51 @@
+File Name,Actual Noise Type,Classified Noise Type
+noisy_white_audio_1.wav,white,Unknown
+noisy_white_audio_2.wav,white,Unknown
+noisy_white_audio_3.wav,white,Unknown
+noisy_white_audio_4.wav,white,Brownian Noise
+noisy_white_audio_5.wav,white,Pink Noise
+noisy_white_audio_6.wav,white,Pink Noise
+noisy_white_audio_7.wav,white,Unknown
+noisy_white_audio_8.wav,white,Brownian Noise
+noisy_white_audio_9.wav,white,Unknown
+noisy_white_audio_10.wav,white,Unknown
+noisy_pink_audio_1.wav,pink,Brownian Noise
+noisy_pink_audio_2.wav,pink,Brownian Noise
+noisy_pink_audio_3.wav,pink,Brownian Noise
+noisy_pink_audio_4.wav,pink,Brownian Noise
+noisy_pink_audio_5.wav,pink,Brownian Noise
+noisy_pink_audio_6.wav,pink,Brownian Noise
+noisy_pink_audio_7.wav,pink,Brownian Noise
+noisy_pink_audio_8.wav,pink,Brownian Noise
+noisy_pink_audio_9.wav,pink,Brownian Noise
+noisy_pink_audio_10.wav,pink,Brownian Noise
+noisy_brownian_audio_1.wav,brownian,Brownian Noise
+noisy_brownian_audio_2.wav,brownian,Brownian Noise
+noisy_brownian_audio_3.wav,brownian,Brownian Noise
+noisy_brownian_audio_4.wav,brownian,Brownian Noise
+noisy_brownian_audio_5.wav,brownian,Brownian Noise
+noisy_brownian_audio_6.wav,brownian,Brownian Noise
+noisy_brownian_audio_7.wav,brownian,Brownian Noise
+noisy_brownian_audio_8.wav,brownian,Brownian Noise
+noisy_brownian_audio_9.wav,brownian,Brownian Noise
+noisy_brownian_audio_10.wav,brownian,Brownian Noise
+noisy_blue_audio_1.wav,blue,Unknown
+noisy_blue_audio_2.wav,blue,Unknown
+noisy_blue_audio_3.wav,blue,Unknown
+noisy_blue_audio_4.wav,blue,Pink Noise
+noisy_blue_audio_5.wav,blue,Pink Noise
+noisy_blue_audio_6.wav,blue,Unknown
+noisy_blue_audio_7.wav,blue,Unknown
+noisy_blue_audio_8.wav,blue,Pink Noise
+noisy_blue_audio_9.wav,blue,Unknown
+noisy_blue_audio_10.wav,blue,Unknown
+noisy_violet_audio_1.wav,violet,Unknown
+noisy_violet_audio_2.wav,violet,Unknown
+noisy_violet_audio_3.wav,violet,Unknown
+noisy_violet_audio_4.wav,violet,Pink Noise
+noisy_violet_audio_5.wav,violet,Unknown
+noisy_violet_audio_6.wav,violet,Unknown
+noisy_violet_audio_7.wav,violet,Unknown
+noisy_violet_audio_8.wav,violet,Pink Noise
+noisy_violet_audio_9.wav,violet,White Noise
+noisy_violet_audio_10.wav,violet,Unknown

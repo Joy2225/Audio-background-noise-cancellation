@@ -44,8 +44,8 @@ def metrics(reference, enhanced, rate):
     target_rate = 16000  # Target sample rate for PESQ compatibility
     if rate != target_rate:
         print(f"Resampling from {rate} Hz to {target_rate} Hz for PESQ compatibility...")
-        reference_signal = resample(reference_signal, int(len(reference_signal) * target_rate / rate))
-        enhanced_signal = resample(enhanced_signal, int(len(enhanced_signal) * target_rate / rate))
+        reference_signal_1 = resample(reference_signal, int(len(reference_signal) * target_rate / rate))
+        enhanced_signal_1 = resample(enhanced_signal, int(len(enhanced_signal) * target_rate / rate))
         rate = target_rate
 
     # Ensure the signals are 1D
@@ -56,7 +56,7 @@ def metrics(reference, enhanced, rate):
         raise ValueError("Signals must be 1D arrays for PESQ.")
 
     # PESQ Score
-    pesq_score = pesq(rate, reference_signal, enhanced_signal, 'wb')
+    pesq_score = pesq(rate, reference_signal_1, enhanced_signal_1, 'wb')
 
     # SI-SNR
     si_snr_score = compute_si_snr(reference_signal, enhanced_signal)
