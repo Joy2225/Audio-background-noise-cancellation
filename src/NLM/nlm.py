@@ -9,6 +9,9 @@ from pystoi import stoi
 from pesq import pesq
 from scipy.signal import resample
 import scipy.io.wavfile as wav
+import time
+import psutil
+import os
 
 SAMPLE_RATE = 16000
 
@@ -177,9 +180,14 @@ def main(input_wav, output_wav, patch_size=512, search_window=1024, h=0.8):
     # print(f"SDR Score: {sdr_score:.2f} dB")
 
 if __name__ == "__main__":
+    process = psutil.Process(os.getpid())
+    start=time.time()
     # Input and output file paths
     input_wav = "noisefunkguitare.wav"  # Replace with your input file path
     output_wav = "denoised_audio.wav"  # Replace with your desired output file path
 
     # Call the main function
     main(input_wav, output_wav)
+    end=time.time()
+    print(f"Time taken: {end-start} seconds")
+    print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")

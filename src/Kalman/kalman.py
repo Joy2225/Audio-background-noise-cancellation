@@ -6,6 +6,9 @@ from scipy.signal import resample
 from pesq import pesq
 from pystoi import stoi
 from mir_eval.separation import bss_eval_sources
+import time
+import psutil
+import os
 
 # Function for Kalman Filtering Denoising
 def kalman_filter_denoising(audio, process_noise=1e-5, measurement_noise=1e-2):
@@ -135,9 +138,14 @@ def main(input_wav, output_wav):
     plt.show()
 
 if __name__ == "__main__":
+    process = psutil.Process(os.getpid())
+    start=time.time()
     # Input, output, and reference file paths
     input_wav = "noisefunkguitare.wav"  # Replace with your input file path
     output_wav = "denoised_audio.wav"  # Replace with your desired output file path
 
     # Call the main function
     main(input_wav, output_wav)
+    end=time.time()
+    print(f"Time taken: {end-start} seconds")
+    print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")

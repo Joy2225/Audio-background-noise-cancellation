@@ -60,9 +60,8 @@ reduced_noise = np.int16(reduced_noise / np.max(np.abs(reduced_noise)) * 32767)
 
 # Write the result to a file
 wavfile.write("mywav_reduced_noise.wav", rate, reduced_noise)
-end=time.time()
-print(f"Time taken: {end-start} seconds")
-print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")
+
+
 
 
 
@@ -90,3 +89,6 @@ print(f"PESQ Score: {pesq_score}")
 print(f"SI-SNR Score: {si_snr_score} dB")
 print(f"STOI Score: {stoi_score}")
 print(f"SDR Score: {sdr[0]} dB")
+end=time.time()
+print(f"Time taken: {end-start} seconds")
+print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")
