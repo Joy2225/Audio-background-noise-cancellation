@@ -12,3 +12,4 @@ wheels/
 *.flac
 src/RNNnoise/rnnoise
 data/rnnoise_contributions.tar.gz
+src/noiseGeneration/noiseSamples/noised/raw
