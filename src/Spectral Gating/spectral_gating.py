@@ -9,7 +9,7 @@ import time
 
 from pystoi import stoi
 from pesq import pesq
-import mir_eval
+from mir_eval.separation import bss_eval_sources
 import torch
 
 
@@ -17,24 +17,15 @@ process = psutil.Process(os.getpid())
 start=time.time()
 
 
-def si_snr(estimate, reference, epsilon=1e-8):
-    estimate = estimate - estimate.mean()
-    reference = reference - reference.mean()
-    reference_pow = reference.pow(2).mean(axis=1, keepdim=True)
-    mix_pow = (estimate * reference).mean(axis=1, keepdim=True)
-    scale = mix_pow / (reference_pow + epsilon)
-
-    reference = scale * reference
-    error = estimate - reference
-
-    reference_pow = reference.pow(2)
-    error_pow = error.pow(2)
-
-    reference_pow = reference_pow.mean(axis=1)
-    error_pow = error_pow.mean(axis=1)
-
-    si_snr = 10 * torch.log10(reference_pow) - 10 * torch.log10(error_pow)
-    return si_snr.item()
+# Function to compute SI-SNR
+def compute_si_snr(reference, enhanced):
+    reference = reference - np.mean(reference)
+    enhanced = enhanced - np.mean(enhanced)
+    dot_product = np.dot(reference, enhanced)
+    projection = dot_product * reference / np.dot(reference, reference)
+    noise = enhanced - projection
+    si_snr = 10 * np.log10(np.dot(projection, projection) / np.dot(noise, noise))
+    return si_snr
 
 
 
@@ -55,7 +46,8 @@ if len(data.shape) > 1:  # Stereo
 
 # Downsample if sample rate is very high (e.g., above 44.1 kHz)
 target_rate = 16000  # Target sample rate for lower memory use
-if rate > target_rate:
+if rate != target_rate:
+    print(f"Resampling from {rate} Hz to {target_rate} Hz for PESQ compatibility...")
     data = resample(data, int(len(data) * target_rate / rate))
     rate = target_rate
 
@@ -82,33 +74,23 @@ print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")
 
 
 
+# Metrics Calculation
+print("\nCalculating Metrics...")
+# Assuming original data is clean and noisefree for metrics calculation
 reference_signal = data.astype(float)
 enhanced_signal = reduced_noise.astype(float)
 
-
-# Ensure reference_signal and enhanced_signal are numpy arrays of shape (signal_length,)
-reference_signal_1 = np.squeeze(reference_signal)  # Ensure it is 1D if loaded as 2D
-enhanced_signal_1 = np.squeeze(enhanced_signal)    # Ensure it is 1D if loaded as 2D
-
-# Convert to PyTorch tensors and add a batch dimension
-reference_tensor = torch.tensor(reference_signal_1, dtype=torch.float32).unsqueeze(0)  # Shape: [1, signal_length]
-enhanced_tensor = torch.tensor(enhanced_signal_1, dtype=torch.float32).unsqueeze(0)    # Shape: [1, signal_length]
-
-# SI-SNR calculation
-si_snr_score = si_snr(enhanced_tensor, reference_tensor)  # Use the updated tensors
-
+# PESQ (Wideband mode)
 pesq_score = pesq(rate, reference_signal, enhanced_signal, 'wb')
 
 # SI-SNR
-si_snr_score = si_snr(enhanced_signal, reference_signal)
-(sdr, _, _, _,) = mir_eval.separation.bss_eval_sources(reference_signal.numpy(), enhanced_signal.numpy(), False)
-
+si_snr_score = compute_si_snr(reference_signal, enhanced_signal)
 
 # STOI
 stoi_score = stoi(reference_signal, enhanced_signal, rate)
 
 # SDR
-sdr, sir, sar, perm = mir_eval.bss_eval_sources(reference_signal[np.newaxis, :], enhanced_signal[np.newaxis, :])
+sdr, sir, sar, perm = bss_eval_sources(reference_signal[np.newaxis, :], enhanced_signal[np.newaxis, :])
 
 # Display Results
 print(f"PESQ Score: {pesq_score}")
