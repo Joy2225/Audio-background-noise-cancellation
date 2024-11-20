@@ -4,7 +4,7 @@ import librosa.display
 import soundfile as sf
 import matplotlib.pyplot as plt
 import torch
-import mir_eval
+from mir_eval.separation import bss_eval_sources
 from pystoi import stoi
 from pesq import pesq
 from scipy.signal import resample
@@ -62,7 +62,7 @@ def metrics(reference, enhanced, rate):
     stoi_score = stoi(reference_signal, enhanced_signal, rate)
 
     # SDR
-    sdr, sir, sar, perm = mir_eval.bss_eval_sources(reference_signal[np.newaxis, :], enhanced_signal[np.newaxis, :])
+    sdr, sir, sar, perm = bss_eval_sources(reference_signal[np.newaxis, :], enhanced_signal[np.newaxis, :])
 
     # Display Results
     print(f"PESQ Score: {pesq_score}")
