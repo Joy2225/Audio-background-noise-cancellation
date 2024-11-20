@@ -72,4 +72,5 @@ def classify_noise(file_path):
     
     return noise_type
 
-classify_noise("noisefunkguitare.wav")
+print(classify_noise("../../data/noiseSamples/noised/noisy_blue_audio_1.wav"))
+print(classify_noise("../../data/noiseSamples/noised/noisy_blue_audio_2.wav"))
