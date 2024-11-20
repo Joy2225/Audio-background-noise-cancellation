@@ -57,31 +57,31 @@ if st.button("Submit"):
             if response.status_code == 200:
                 with ZipFile(BytesIO(response.content)) as zf:
                     # Extract metrics and noise type
-                    metrics_data = pd.read_csv(zf.open("metrics.csv"))
+                    metrics_data = pd.read_csv(zf.open("metrics_denoised.csv"))
                     noise_type = metrics_data.iloc[0]["Noise Type"]
 
                     # Display original audio details
                     st.header("Original Audio")
                     st.subheader("Noise Type:")
                     st.write(noise_type)  # Display noise type
-                    st.subheader("Metrics:")
-                    st.table(metrics_data)
+                    # st.subheader("Metrics:")
+                    # st.table(metrics_data)
 
                     # Display original graphs
                     st.subheader("Original Graphs")
                     for filename in ["stft.png", "psd.png", "mfcc.png"]:
-                        st.image(zf.read(filename), caption=filename.split(".")[0], use_column_width=True)
+                        st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
                     # Display denoised audio details
                     st.header("Kalman Denoised Audio")
                     st.audio(BytesIO(zf.read("denoised_audio.wav")), format="audio/wav")
-                    st.subheader("Metrics (Denoised):")
+                    st.subheader("Metrics:")
                     st.table(pd.read_csv(zf.open("metrics_denoised.csv")))
 
                     # Display denoised graphs
                     st.subheader("Denoised Graphs")
                     for filename in ["stft_denoised_kl.png", "psd_denoised_kl.png", "mfcc_denoised_kl.png", "freq_kl.png"]:
-                        st.image(zf.read(filename), caption=filename.split(".")[0], use_column_width=True)
+                        st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
             else:
                 st.error(f"Error: {response.text}")
