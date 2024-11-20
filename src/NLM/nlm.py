@@ -3,6 +3,77 @@ import librosa
 import librosa.display
 import soundfile as sf
 import matplotlib.pyplot as plt
+import torch
+from mir_eval.separation import bss_eval_sources
+from pystoi import stoi
+from pesq import pesq
+from scipy.signal import resample
+import scipy.io.wavfile as wav
+import time
+import psutil
+import os
+
+SAMPLE_RATE = 16000
+
+# Function to compute SI-SNR
+def compute_si_snr(reference, enhanced):
+    reference = reference - np.mean(reference)
+    enhanced = enhanced - np.mean(enhanced)
+    dot_product = np.dot(reference, enhanced)
+    projection = dot_product * reference / np.dot(reference, reference)
+    noise = enhanced - projection
+    si_snr = 10 * np.log10(np.dot(projection, projection) / np.dot(noise, noise))
+    return si_snr
+
+
+# Function to calculate metrics
+def metrics(reference, enhanced, rate):
+    print("\nCalculating Metrics...")
+
+    # Convert signals to float for processing
+    reference_signal = reference.astype(float)
+    enhanced_signal = enhanced.astype(float)
+
+    # Ensure mono signals
+    if reference_signal.ndim > 1:
+        reference_signal = reference_signal.mean(axis=1)  # Convert stereo to mono
+    if enhanced_signal.ndim > 1:
+        enhanced_signal = enhanced_signal.mean(axis=1)
+
+    # Resampling for PESQ compatibility
+    target_rate = 16000  # Target sample rate for PESQ compatibility
+    if rate != target_rate:
+        print(f"Resampling from {rate} Hz to {target_rate} Hz for PESQ compatibility...")
+        reference_signal = resample(reference_signal, int(len(reference_signal) * target_rate / rate))
+        enhanced_signal = resample(enhanced_signal, int(len(enhanced_signal) * target_rate / rate))
+        rate = target_rate
+
+    # Ensure the signals are 1D
+    reference_signal = np.squeeze(reference_signal)
+    enhanced_signal = np.squeeze(enhanced_signal)
+
+    if reference_signal.ndim != 1 or enhanced_signal.ndim != 1:
+        raise ValueError("Signals must be 1D arrays for PESQ.")
+
+    # PESQ Score
+    pesq_score = pesq(rate, reference_signal, enhanced_signal, 'wb')
+
+    # SI-SNR
+    si_snr_score = compute_si_snr(reference_signal, enhanced_signal)
+
+    # STOI
+    stoi_score = stoi(reference_signal, enhanced_signal, rate)
+
+    # SDR
+    sdr, sir, sar, perm = bss_eval_sources(reference_signal[np.newaxis, :], enhanced_signal[np.newaxis, :])
+
+    # Display Results
+    print(f"PESQ Score: {pesq_score}")
+    print(f"SI-SNR Score: {si_snr_score:.2f} dB")
+    print(f"STOI Score: {stoi_score:.2f}")
+    print(f"SDR Score: {sdr[0]:.2f} dB")
+
+
 
 def non_local_means_denoising(audio, patch_size=512, search_window=1024, h=0.8):
     """
@@ -71,10 +142,52 @@ def main(input_wav, output_wav, patch_size=512, search_window=1024, h=0.8):
     # plt.tight_layout()
     # plt.show()
 
+    rate, data = wav.read(input_wav)
+    rate_enhanced, enhanced_signal = wav.read(output_wav)
+    metrics(data, enhanced_signal, rate)
+    # if len(data.shape) > 1:
+    #         print("Converting stereo to mono...")
+    #         data = np.mean(data, axis=1)
+
+    # # Resample if needed for PESQ compatibility
+    # if rate != SAMPLE_RATE:
+    #     print(f"Resampling from {rate} Hz to {SAMPLE_RATE} Hz for PESQ compatibility...")
+    #     data = resample(data, int(len(data) * SAMPLE_RATE / rate))
+    #     rate = SAMPLE_RATE
+    # else:
+    #     rate = rate
+    # # Convert to mono if needed
+    # if len(enhanced_signal.shape) > 1:
+    #     enhanced_signal = np.mean(enhanced_signal, axis=1)
+
+    # # Align lengths of reference and enhanced signals
+    # min_length = min(len(data), len(enhanced_signal))
+    # reference_signal = data[:min_length].astype(float)
+    # enhanced_signal = enhanced_signal[:min_length].astype(float)
+
+    # # Convert signals to PyTorch tensors
+    # reference_tensor = torch.tensor(reference_signal).unsqueeze(0)  # Add batch dimension
+    # enhanced_tensor = torch.tensor(enhanced_signal).unsqueeze(0)  # Add batch dimension
+
+    # # Evaluate metrics
+    # print("\nCalculating Metrics...")
+    # si_snr_score, sdr_score, pesq_score, stoi_score = evaluate(enhanced_tensor, reference_tensor)
+
+    # # Display Results
+    # print(f"PESQ Score: {pesq_score}")
+    # print(f"SI-SNR Score: {si_snr_score:.2f} dB")
+    # print(f"STOI Score: {stoi_score:.2f}")
+    # print(f"SDR Score: {sdr_score:.2f} dB")
+
 if __name__ == "__main__":
+    process = psutil.Process(os.getpid())
+    start=time.time()
     # Input and output file paths
     input_wav = "noisefunkguitare.wav"  # Replace with your input file path
     output_wav = "denoised_audio.wav"  # Replace with your desired output file path
 
     # Call the main function
     main(input_wav, output_wav)
+    end=time.time()
+    print(f"Time taken: {end-start} seconds")
+    print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")
