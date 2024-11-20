@@ -3,6 +3,8 @@ import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
 import io
+import matplotlib
+matplotlib.use('Agg')  # Required to save plots to a buffer
 
 def save_plot_to_buffer(plot_func, *args, **kwargs):
     """
