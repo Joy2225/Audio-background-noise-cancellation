@@ -101,7 +101,7 @@ def generate_violet_noise(length, fs):
 
 
 # Example usage
-input_dir = "/home/dhruv/Programming/CollegeProjects/Sem5/DAA/Audio-background-noise-cancellation/src/addNoiseType/noiseSamples/clean/wav"
+input_dir = "/home/dhruv/Programming/CollegeProjects/Sem5/DAA/Audio-background-noise-cancellation/src/noiseGeneration/noiseSamples/clean/wav"
 
 # Process all noise types
 noise_types = ["white", "pink", "brownian", "blue", "violet"]

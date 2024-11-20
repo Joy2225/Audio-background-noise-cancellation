@@ -136,8 +136,17 @@ class Wiener:
             temp_s_est = np.real(ifft(S)) * self.SHIFT
             s_est[i_min:i_max] += temp_s_est[:self.FRAME]  # Overlap-add
 
+<<<<<<< HEAD
         # Normalize enhanced signal
         s_est = s_est / np.abs(s_est).max()  # Normalize to [-1, 1]
+=======
+                # Temporal estimated Signal
+                # Estimated signals at each frame normalized by the shift value
+                temp_s_est = np.real(ifft(S)) * self.SHIFT
+                s_est[i_min:i_max, channel] += temp_s_est[:self.FRAME]  # Truncating zero padding
+        metrics(self.x, s_est / s_est.max(), self.FS)
+        wav.write(self.WAV_FILE+'_wiener.wav', self.FS,s_est/s_est.max() )
+>>>>>>> 17df6806695396cd3d685288f0e6169b02bb7c8e
 
         # Metrics evaluation
         metrics(self.x, s_est, self.FS)

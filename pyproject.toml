@@ -13,6 +13,7 @@ dependencies = [
     "noisereduce>=3.0.3",
     "openpyxl>=3.1.5",
     "pesq>=0.0.4",
+    "pydub>=0.25.1",
     "pystoi>=0.4.1",
     "pywavelets>=1.7.0",
     "soundfile>=0.12.1",
