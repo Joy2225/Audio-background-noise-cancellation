@@ -8,6 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+
+
 *.wav
 *.flac
 src/RNNnoise/rnnoise
