@@ -72,3 +72,4 @@ def classify_noise(file_path):
     
     return noise_type
 
+classify_noise("noisefunkguitare.wav")
