@@ -86,6 +86,16 @@ reference_signal = data.astype(float)
 enhanced_signal = reduced_noise.astype(float)
 
 
+# Ensure reference_signal and enhanced_signal are numpy arrays of shape (signal_length,)
+reference_signal_1 = np.squeeze(reference_signal)  # Ensure it is 1D if loaded as 2D
+enhanced_signal_1 = np.squeeze(enhanced_signal)    # Ensure it is 1D if loaded as 2D
+
+# Convert to PyTorch tensors and add a batch dimension
+reference_tensor = torch.tensor(reference_signal_1, dtype=torch.float32).unsqueeze(0)  # Shape: [1, signal_length]
+enhanced_tensor = torch.tensor(enhanced_signal_1, dtype=torch.float32).unsqueeze(0)    # Shape: [1, signal_length]
+
+# SI-SNR calculation
+si_snr_score = si_snr(enhanced_tensor, reference_tensor)  # Use the updated tensors
 
 pesq_score = pesq(rate, reference_signal, enhanced_signal, 'wb')
 
