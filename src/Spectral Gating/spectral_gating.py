@@ -10,7 +10,7 @@ import time
 from pystoi import stoi
 from pesq import pesq
 from mir_eval.separation import bss_eval_sources
-import torch
+
 
 
 process = psutil.Process(os.getpid())
@@ -26,13 +26,6 @@ def compute_si_snr(reference, enhanced):
     noise = enhanced - projection
     si_snr = 10 * np.log10(np.dot(projection, projection) / np.dot(noise, noise))
     return si_snr
-
-
-
-
-
-
-
 
 
 # Load data
