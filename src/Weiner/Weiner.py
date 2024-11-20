@@ -3,6 +3,52 @@ from scipy.fftpack import fft, ifft
 import scipy.io.wavfile as wav
 import scipy.signal as sg
 import numpy as np
+from pystoi import stoi
+from pesq import pesq
+from mir_eval.separation import bss_eval_sources
+from scipy.signal import resample
+
+
+# Function to compute SI-SNR
+def compute_si_snr(reference, enhanced):
+    reference = reference - np.mean(reference)
+    enhanced = enhanced - np.mean(enhanced)
+    dot_product = np.dot(reference, enhanced)
+    projection = dot_product * reference / np.dot(reference, reference)
+    noise = enhanced - projection
+    si_snr = 10 * np.log10(np.dot(projection, projection) / np.dot(noise, noise))
+    return si_snr
+
+def metrics(reference, enhanced, rate):
+    # Metrics Calculation
+    print("\nCalculating Metrics...")
+    # Assuming original data is clean and noisefree for metrics calculation
+    reference_signal = reference.astype(float)
+    enhanced_signal = enhanced.astype(float)
+
+    # PESQ (Wideband mode)
+    target_rate = 16000  # Target sample rate for lower memory use
+    if rate != target_rate:
+        print(f"Resampling from {rate} Hz to {target_rate} Hz for PESQ compatibility...")
+        reference_signal_1 = resample(reference_signal, int(len(reference_signal) * target_rate / rate))
+        enhanced_signal_1 = resample(enhanced_signal, int(len(enhanced_signal) * target_rate / rate))
+        rate = target_rate
+    pesq_score = pesq(rate, reference_signal_1, enhanced_signal_1, 'wb')
+
+    # SI-SNR
+    si_snr_score = compute_si_snr(reference_signal, enhanced_signal)
+
+    # STOI
+    stoi_score = stoi(reference_signal, enhanced_signal, rate)
+
+    # SDR
+    sdr, sir, sar, perm = bss_eval_sources(reference_signal[np.newaxis, :], enhanced_signal[np.newaxis, :])
+
+    # Display Results
+    print(f"PESQ Score: {pesq_score}")
+    print(f"SI-SNR Score: {si_snr_score} dB")
+    print(f"STOI Score: {stoi_score}")
+    print(f"SDR Score: {sdr[0]} dB")
 
 def halfwave_rectification(array):
     """
@@ -136,6 +182,7 @@ class Wiener:
                 # Estimated signals at each frame normalized by the shift value
                 temp_s_est = np.real(ifft(S)) * self.SHIFT
                 s_est[i_min:i_max, channel] += temp_s_est[:self.FRAME]  # Truncating zero padding
+                metrics(self.x, s_est/s_est.max(), self.FS)
         wav.write(self.WAV_FILE+'_wiener.wav', self.FS,s_est/s_est.max() )
 
     def wiener_two_step(self):
@@ -191,4 +238,5 @@ class Wiener:
                 # Update
                 # Rolling matrix to update old values (Circshift in Matlab)
                 S = np.roll(S, 1, axis=0)
+                metrics(self.x, s_est_tsnr/s_est_tsnr.max(), self.FS)
         wav.write(self.WAV_FILE+'_wiener_two_step.wav', self.FS,s_est_tsnr/s_est_tsnr.max() )
