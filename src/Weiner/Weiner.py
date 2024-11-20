@@ -182,7 +182,7 @@ class Wiener:
                 # Estimated signals at each frame normalized by the shift value
                 temp_s_est = np.real(ifft(S)) * self.SHIFT
                 s_est[i_min:i_max, channel] += temp_s_est[:self.FRAME]  # Truncating zero padding
-                metrics(self.x, s_est/s_est.max(), self.FS)
+        metrics(self.x, s_est / s_est.max(), self.FS)
         wav.write(self.WAV_FILE+'_wiener.wav', self.FS,s_est/s_est.max() )
 
     def wiener_two_step(self):
