@@ -12,6 +12,7 @@ from scipy.signal import resample
 from pesq import pesq
 from pystoi import stoi
 from mir_eval.separation import bss_eval_sources
+import pandas as pd
 
 # from main import app
 app = Flask(__name__)
@@ -77,8 +78,8 @@ def metrics(reference, enhanced, rate):
 
 
 
-def plot_graph(audio_file):
-    audio, sr = librosa.load(audio_file, sr=None)
+def plot_graph(audio,sr):
+    # audio, sr = librosa.load(audio_file, sr=None)
     audio = audio / np.max(np.abs(audio))
 
     # Step 3: Compute features for graph generation
@@ -117,7 +118,14 @@ def plot_graph(audio_file):
         noise_type = "Unknown"
         
     return stft_buf, psd_buf, mfcc_buf, graph_buf, noise_type
-    
+
+def save_metrics_to_csv(metrics_dict, noise_type, filename):
+    metrics_dict["Noise Type"] = [noise_type]
+    metrics_df = pd.DataFrame(metrics_dict)
+    metrics_buf = io.BytesIO()
+    metrics_df.to_csv(metrics_buf, index=False)
+    metrics_buf.seek(0)
+    return metrics_buf  
 
 @app.route("/classify_noise", methods=["POST"])
 def classify_noise_endpoint():
@@ -126,25 +134,31 @@ def classify_noise_endpoint():
         return jsonify({"error": "No file part"}), 400
 
     audio_file = request.files["file"]
-
+    audio, sr = librosa.load(audio_file, sr=None)
+    stft_buf, psd_buf, mfcc_buf, graph_buf, noise_type = plot_graph(audio, sr)
     try:
-        audio, sr = librosa.load(audio_file, sr=None)
+        
         denoised_audio = kalman_filter_denoising(audio)
         stft_buf_denoised_kl, psd_buf_denoised_kl, mfcc_buf_denoised_kl, freq_kl, _ = plot_graph(denoised_audio, sr)
         metrics_denoised = metrics(audio, denoised_audio, sr)
+        metrics_denoised_buf = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised.csv")
         
-
-        # Step 4: Generate graphs
-        stft_buf, psd_buf, mfcc_buf, graph_buf, noise_type = plot_graph(audio_file)
+        
         
 
         # Step 5: Create a zip file containing all the graphs
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w") as zf:
+            zf.writestr("metrics_denoised.csv", metrics_denoised_buf.getvalue())
             zf.writestr("stft.png", stft_buf.getvalue())
             zf.writestr("psd.png", psd_buf.getvalue())
             zf.writestr("mfcc.png", mfcc_buf.getvalue())
-            zf.writestr("Frequency.png", graph_buf.getvalue())
+            zf.writestr("mfcc.png", graph_buf.getvalue())
+            zf.writestr("stft_denoised_kl.png", stft_buf_denoised_kl.getvalue())
+            zf.writestr("psd_denoised_kl.png", psd_buf_denoised_kl.getvalue())
+            zf.writestr("mfcc_denoised_kl.png", mfcc_buf_denoised_kl.getvalue())
+            zf.writestr("freq_kl.png", freq_kl.getvalue())
+            zf.writestr("denoised_audio_kl.wav", denoised_audio)
 
         zip_buffer.seek(0)
 
