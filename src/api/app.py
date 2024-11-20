@@ -13,6 +13,8 @@ from pesq import pesq
 from pystoi import stoi
 from mir_eval.separation import bss_eval_sources
 import pandas as pd
+from methods.NLM.nlm import non_local_means_denoising
+from methods.Spectral_Gating.spectral_gating import spectral_denoising
 
 # from main import app
 app = Flask(__name__)
@@ -69,10 +71,10 @@ def metrics(reference, enhanced, rate):
     sdr, sir, sar, perm = bss_eval_sources(reference_signal[np.newaxis, :], enhanced_signal[np.newaxis, :])
 
     # Display Results
-    print(f"PESQ Score: {pesq_score}")
-    print(f"SI-SNR Score: {si_snr_score:.2f} dB")
-    print(f"STOI Score: {stoi_score:.2f}")
-    print(f"SDR Score: {sdr[0]:.2f} dB")
+    # print(f"PESQ Score: {pesq_score}")
+    # print(f"SI-SNR Score: {si_snr_score:.2f} dB")
+    # print(f"STOI Score: {stoi_score:.2f}")
+    # print(f"SDR Score: {sdr[0]:.2f} dB")
     return {"PESQ Score": pesq_score, "SI-SNR Score": si_snr_score, "STOI Score": stoi_score, "SDR Score": sdr[0]}
 
 
@@ -150,25 +152,42 @@ def classify_noise_endpoint():
         denoised_audio = kalman_filter_denoising(audio)
         stft_buf_denoised_kl, psd_buf_denoised_kl, mfcc_buf_denoised_kl, freq_kl, _ = plot_graph(denoised_audio, sr, "Kalman")
         metrics_denoised = metrics(audio, denoised_audio, sr)
-        metrics_denoised_buf = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised.csv")
-        denoised_audio_bytes = save_audio_to_bytes(denoised_audio, sr)
+        metrics_denoised_buf_kl = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_kl.csv")
+        denoised_audio_bytes_kl = save_audio_to_bytes(denoised_audio, sr)
         
+
+        denoised_audio = non_local_means_denoising(audio)
+        stft_buf_denoised_nlm, psd_buf_denoised_nlm, mfcc_buf_denoised_nlm, freq_nlm, _ = plot_graph(denoised_audio, sr, "NLM")
+        metrics_denoised = metrics(audio, denoised_audio, sr)
+        metrics_denoised_buf_nlm = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_nlm.csv")
+        denoised_audio_bytes_nlm = save_audio_to_bytes(denoised_audio, sr)
+
+
+
         
         
 
         # Step 5: Create a zip file containing all the graphs
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w") as zf:
-            zf.writestr("metrics_denoised.csv", metrics_denoised_buf.getvalue())
+            zf.writestr("metrics_denoised_kl.csv", metrics_denoised_buf_kl.getvalue())
             zf.writestr("stft.png", stft_buf.getvalue())
             zf.writestr("psd.png", psd_buf.getvalue())
             zf.writestr("mfcc.png", mfcc_buf.getvalue())
             zf.writestr("freq_graph.png", graph_buf.getvalue())
+
             zf.writestr("stft_denoised_kl.png", stft_buf_denoised_kl.getvalue())
             zf.writestr("psd_denoised_kl.png", psd_buf_denoised_kl.getvalue())
             zf.writestr("mfcc_denoised_kl.png", mfcc_buf_denoised_kl.getvalue())
             zf.writestr("freq_kl.png", freq_kl.getvalue())
-            zf.writestr("denoised_audio_kl.wav", denoised_audio_bytes)
+            zf.writestr("denoised_audio_kl.wav", denoised_audio_bytes_kl)
+
+            zf.writestr("metrics_denoised_nlm.csv", metrics_denoised_buf_nlm.getvalue())
+            zf.writestr("stft_denoised_nlm.png", stft_buf_denoised_nlm.getvalue())
+            zf.writestr("psd_denoised_nlm.png", psd_buf_denoised_nlm.getvalue())
+            zf.writestr("mfcc_denoised_nlm.png", mfcc_buf_denoised_nlm.getvalue())
+            zf.writestr("freq_nlm.png", freq_nlm.getvalue())
+            zf.writestr("denoised_audio_nlm.wav", denoised_audio_bytes_nlm)
 
         zip_buffer.seek(0)
 

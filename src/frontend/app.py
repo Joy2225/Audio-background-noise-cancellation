@@ -57,7 +57,7 @@ if st.button("Submit"):
             if response.status_code == 200:
                 with ZipFile(BytesIO(response.content)) as zf:
                     # Extract metrics and noise type
-                    metrics_data = pd.read_csv(zf.open("metrics_denoised.csv"))
+                    metrics_data = pd.read_csv(zf.open("metrics_denoised_kl.csv"))
                     noise_type = metrics_data.iloc[0]["Noise Type"]
 
                     
@@ -74,17 +74,30 @@ if st.button("Submit"):
                     for filename in ["stft.png", "psd.png", "mfcc.png", "freq_graph.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
-                    # Display denoised audio details
+                    # Display kalman denoised audio details
                     st.header("Kalman Denoised Audio")
                     with zf.open("denoised_audio_kl.wav") as audio_file:
                         audio_data = audio_file.read()
                         st.audio(data=audio_data, format="audio/wav")
                     st.subheader("Metrics:")
-                    st.table(pd.read_csv(zf.open("metrics_denoised.csv")))
+                    st.table(pd.read_csv(zf.open("metrics_denoised_kl.csv")))
 
                     # Display denoised graphs
-                    st.subheader("Denoised Graphs")
+                    st.subheader("Kalman Denoised Graphs")
                     for filename in ["stft_denoised_kl.png", "psd_denoised_kl.png", "mfcc_denoised_kl.png", "freq_kl.png"]:
+                        st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
+                    
+                    # Display NLM denoised audio details
+                    st.header("NLM Denoised Audio")
+                    with zf.open("denoised_audio_nlm.wav") as audio_file:
+                        audio_data = audio_file.read()
+                        st.audio(data=audio_data, format="audio/wav")
+                    st.subheader("Metrics:")
+                    st.table(pd.read_csv(zf.open("metrics_denoised_nlm.csv")))
+
+                    # Display denoised graphs
+                    st.subheader("NLM Denoised Graphs")
+                    for filename in ["stft_denoised_nlm.png", "psd_denoised_nlm.png", "mfcc_denoised_nlm.png", "freq_nlm.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
             else:
