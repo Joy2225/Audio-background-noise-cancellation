@@ -15,6 +15,8 @@ from mir_eval.separation import bss_eval_sources
 import pandas as pd
 from methods.NLM.nlm import non_local_means_denoising
 from methods.Spectral_Gating.spectral_gating import spectral_denoising
+from scipy.io import wavfile
+from methods.Wavelets.denoise import AudioDeNoise
 
 # from main import app
 app = Flask(__name__)
@@ -146,6 +148,7 @@ def classify_noise_endpoint():
 
     audio_file = request.files["file"]
     audio, sr = librosa.load(audio_file, sr=None)
+    # rate, data = wavfile.read(audio_file)
     stft_buf, psd_buf, mfcc_buf, graph_buf, noise_type = plot_graph(audio, sr,"original")
     try:
         
@@ -161,6 +164,21 @@ def classify_noise_endpoint():
         metrics_denoised = metrics(audio, denoised_audio, sr)
         metrics_denoised_buf_nlm = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_nlm.csv")
         denoised_audio_bytes_nlm = save_audio_to_bytes(denoised_audio, sr)
+
+
+        denoised_audio = spectral_denoising(audio, sr)
+        stft_buf_denoised_sg, psd_buf_denoised_sg, mfcc_buf_denoised_sg, freq_sg, _ = plot_graph(denoised_audio, sr, "Spectral Gating")        
+        metrics_denoised = metrics(audio, denoised_audio, sr)
+        metrics_denoised_buf_sg = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_sg.csv")
+        denoised_audio_bytes_sg = save_audio_to_bytes(denoised_audio, sr)
+
+        denoiser = AudioDeNoise(audio_data=audio, sr=sr)
+        denoised_audio = denoiser.deNoise()
+        stft_buf_denoised_wv, psd_buf_denoised_wv, mfcc_buf_denoised_wv, freq_wv, _ = plot_graph(denoised_audio, sr, "Wavelet")
+        metrics_denoised = metrics(audio, denoised_audio, sr)
+        metrics_denoised_buf_wv = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_wv.csv")
+        denoised_audio_bytes_wv = save_audio_to_bytes(denoised_audio, sr)
+
 
 
 
@@ -188,6 +206,21 @@ def classify_noise_endpoint():
             zf.writestr("mfcc_denoised_nlm.png", mfcc_buf_denoised_nlm.getvalue())
             zf.writestr("freq_nlm.png", freq_nlm.getvalue())
             zf.writestr("denoised_audio_nlm.wav", denoised_audio_bytes_nlm)
+
+            zf.writestr("metrics_denoised_sg.csv", metrics_denoised_buf_sg.getvalue())
+            zf.writestr("stft_denoised_sg.png", stft_buf_denoised_sg.getvalue())
+            zf.writestr("psd_denoised_sg.png", psd_buf_denoised_sg.getvalue())
+            zf.writestr("mfcc_denoised_sg.png", mfcc_buf_denoised_sg.getvalue())
+            zf.writestr("freq_sg.png", freq_sg.getvalue())
+            zf.writestr("denoised_audio_sg.wav", denoised_audio_bytes_sg)
+
+            zf.writestr("metrics_denoised_wv.csv", metrics_denoised_buf_wv.getvalue())
+            zf.writestr("stft_denoised_wv.png", stft_buf_denoised_wv.getvalue())
+            zf.writestr("psd_denoised_wv.png", psd_buf_denoised_wv.getvalue())
+            zf.writestr("mfcc_denoised_wv.png", mfcc_buf_denoised_wv.getvalue())
+            zf.writestr("freq_wv.png", freq_wv.getvalue())
+            zf.writestr("denoised_audio_wv.wav", denoised_audio_bytes_wv)
+
 
         zip_buffer.seek(0)
 

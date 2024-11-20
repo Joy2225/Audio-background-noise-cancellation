@@ -99,6 +99,32 @@ if st.button("Submit"):
                     st.subheader("NLM Denoised Graphs")
                     for filename in ["stft_denoised_nlm.png", "psd_denoised_nlm.png", "mfcc_denoised_nlm.png", "freq_nlm.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
+                    
+                    # Display SG denoised audio details
+                    st.header("Spectral Gating Denoised Audio")
+                    with zf.open("denoised_audio_sg.wav") as audio_file:
+                        audio_data = audio_file.read()
+                        st.audio(data=audio_data, format="audio/wav")
+                    st.subheader("Metrics:")
+                    st.table(pd.read_csv(zf.open("metrics_denoised_sg.csv")))
+
+                    # Display denoised graphs
+                    st.subheader("Spectral Gating Denoised Graphs")
+                    for filename in ["stft_denoised_sg.png", "psd_denoised_sg.png", "mfcc_denoised_sg.png", "freq_sg.png"]:
+                        st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
+
+                    # Display Wavelet denoised audio details
+                    st.header("Wavelet Denoised Audio")
+                    with zf.open("denoised_audio_wv.wav") as audio_file:
+                        audio_data = audio_file.read()
+                        st.audio(data=audio_data, format="audio/wav")
+                    st.subheader("Metrics:")
+                    st.table(pd.read_csv(zf.open("metrics_denoised_wv.csv")))
+
+                    # Display denoised graphs
+                    st.subheader("Wavelet Denoised Graphs")
+                    for filename in ["stft_denoised_wv.png", "psd_denoised_wv.png", "mfcc_denoised_wv.png", "freq_wv.png"]:
+                        st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
             else:
                 st.error(f"Error: {response.text}")

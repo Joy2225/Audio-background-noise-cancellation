@@ -551,44 +551,67 @@ def metrics(reference, enhanced, rate):
 
 
 class AudioDeNoise:
-    def __init__(self, inputFile, wavelet="db4", level=2):
-        self.__inputFile = inputFile
-        self.target_rate = SAMPLE_RATE
-        self.__noiseProfile = None
+    # def __init__(self, inputFile, wavelet="db4", level=2):
+    #     self.__inputFile = inputFile
+    #     self.target_rate = SAMPLE_RATE
+    #     self.__noiseProfile = None
+    #     self.wavelet = wavelet
+    #     self.level = level
+
+    def __init__(self, audio_data, sr, wavelet="db4", level=2):
+        self.audio_data = audio_data
+        self.sr = sr
         self.wavelet = wavelet
         self.level = level
 
-    def deNoise(self, outputFile):
-        """Performs noise reduction and saves the denoised audio to outputFile."""
-        info = soundfile.info(self.__inputFile)  # Audio file info
-        rate = info.samplerate
+    # def deNoise(self, outputFile):
+    #     """Performs noise reduction and saves the denoised audio to outputFile."""
+    #     info = soundfile.info(self.__inputFile)  # Audio file info
+    #     rate = info.samplerate
 
-        # Open output file for writing
-        with soundfile.SoundFile(outputFile, "w", samplerate=rate, channels=info.channels) as of:
-            # Process file in chunks
-            for block in tqdm(soundfile.blocks(self.__inputFile, int(rate * info.duration * 0.10))):
-                # Wavelet decomposition
-                coefficients = pywt.wavedec(block, self.wavelet, mode="per", level=self.level)
+    #     # Open output file for writing
+    #     with soundfile.SoundFile(outputFile, "w", samplerate=rate, channels=info.channels) as of:
+    #         # Process file in chunks
+    #         for block in tqdm(soundfile.blocks(self.__inputFile, int(rate * info.duration * 0.10))):
+    #             # Wavelet decomposition
+    #             coefficients = pywt.wavedec(block, self.wavelet, mode="per", level=self.level)
 
-                # Noise estimation and threshold calculation
-                sigma = mad(coefficients[-1])  # Noise standard deviation estimation
-                thresh = sigma * np.sqrt(2 * np.log(len(block)))  # Universal threshold
+    #             # Noise estimation and threshold calculation
+    #             sigma = mad(coefficients[-1])  # Noise standard deviation estimation
+    #             thresh = sigma * np.sqrt(2 * np.log(len(block)))  # Universal threshold
 
-                # Apply thresholding on wavelet coefficients
-                coefficients[1:] = [pywt.threshold(i, value=thresh, mode="soft") for i in coefficients[1:]]
+    #             # Apply thresholding on wavelet coefficients
+    #             coefficients[1:] = [pywt.threshold(i, value=thresh, mode="soft") for i in coefficients[1:]]
 
-                # Reconstruct the clean signal
-                clean = pywt.waverec(coefficients, self.wavelet, mode="per")
-                of.write(clean)  # Write to output file
+    #             # Reconstruct the clean signal
+    #             clean = pywt.waverec(coefficients, self.wavelet, mode="per")
+    #             of.write(clean)  # Write to output file
 
-                # Read the denoised signal
-        enhanced_signal, _ = soundfile.read(outputFile)
+    #             # Read the denoised signal
+    #     enhanced_signal, _ = soundfile.read(outputFile)
 
-        # data, _ = soundfile.read(self.__inputFile)
-        rate, data = wavfile.read(self.__inputFile)
-        # metrics(data, enhanced_signal, rate)
+    #     # data, _ = soundfile.read(self.__inputFile)
+    #     rate, data = wavfile.read(self.__inputFile)
+    #     # metrics(data, enhanced_signal, rate)
 
-        return enhanced_signal
+    #     return enhanced_signal
+
+    def deNoise(self):
+        """Performs noise reduction and returns the denoised audio as a NumPy array."""
+        # Wavelet decomposition
+        coefficients = pywt.wavedec(self.audio_data, self.wavelet, mode="per", level=self.level)
+
+        # Noise estimation and threshold calculation
+        sigma = mad(coefficients[-1])  # Noise standard deviation estimation
+        thresh = sigma * np.sqrt(2 * np.log(len(self.audio_data)))  # Universal threshold
+
+        # Apply thresholding on wavelet coefficients
+        coefficients[1:] = [pywt.threshold(i, value=thresh, mode="soft") for i in coefficients[1:]]
+
+        # Reconstruct the clean signal
+        clean_audio = pywt.waverec(coefficients, self.wavelet, mode="per")
+
+        return clean_audio.astype(np.float32)
         # # Resample if needed for PESQ compatibility
         # if rate != self.target_rate:
         #     print(f"Resampling from {rate} Hz to {self.target_rate} Hz for PESQ compatibility...")

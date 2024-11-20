@@ -30,7 +30,7 @@ def compute_si_snr(reference, enhanced):
 def spectral_denoising(data, rate):
 
     # Load data
-    # rate, data = wavfile.read("vega_pinkr17_16.wav")
+    # rate, data = wavfile.read("noisefunkguitare.wav")
     print(f"Sample rate: {rate}, Data shape: {data.shape}")
 
     # Convert to mono if audio is stereo
@@ -39,11 +39,11 @@ def spectral_denoising(data, rate):
         data = np.mean(data, axis=1)
 
     # Downsample if sample rate is very high (e.g., above 44.1 kHz)
-    target_rate = 16000  # Target sample rate for lower memory use
-    if rate != target_rate:
-        print(f"Resampling from {rate} Hz to {target_rate} Hz for PESQ compatibility...")
-        data = resample(data, int(len(data) * target_rate / rate))
-        rate = target_rate
+    # target_rate = 16000  # Target sample rate for lower memory use
+    # if rate >= target_rate:
+    #     print(f"Resampling from {rate} Hz to {target_rate} Hz for PESQ compatibility...")
+    #     data = resample(data, int(len(data) * target_rate / rate))
+    #     rate = target_rate
 
     # Noise reduction parameters to reduce memory usage
     n_fft = 2048  # FFT size
@@ -60,37 +60,37 @@ def spectral_denoising(data, rate):
     reduced_noise = np.int16(reduced_noise / np.max(np.abs(reduced_noise)) * 32767)
     return reduced_noise
 
-    # Write the result to a file
-    # wavfile.write("mywav_reduced_noise.wav", rate, reduced_noise)
+# Write the result to a file
+# wavfile.write("mywav_reduced_noise.wav", rate, reduced_noise)
 
 
 
 
 
 
-    # # Metrics Calculation
-    # print("\nCalculating Metrics...")
-    # # Assuming original data is clean and noisefree for metrics calculation
-    # reference_signal = data.astype(float)
-    # enhanced_signal = reduced_noise.astype(float)
+# # Metrics Calculation
+# print("\nCalculating Metrics...")
+# # Assuming original data is clean and noisefree for metrics calculation
+# reference_signal = data.astype(float)
+# enhanced_signal = reduced_noise.astype(float)
 
-    # # PESQ (Wideband mode)
-    # pesq_score = pesq(rate, reference_signal, enhanced_signal, 'wb')
+# # PESQ (Wideband mode)
+# pesq_score = pesq(rate, reference_signal, enhanced_signal, 'wb')
 
-    # # SI-SNR
-    # si_snr_score = compute_si_snr(reference_signal, enhanced_signal)
+# # SI-SNR
+# si_snr_score = compute_si_snr(reference_signal, enhanced_signal)
 
-    # # STOI
-    # stoi_score = stoi(reference_signal, enhanced_signal, rate)
+# # STOI
+# stoi_score = stoi(reference_signal, enhanced_signal, rate)
 
-    # # SDR
-    # sdr, sir, sar, perm = bss_eval_sources(reference_signal[np.newaxis, :], enhanced_signal[np.newaxis, :])
+# # SDR
+# sdr, sir, sar, perm = bss_eval_sources(reference_signal[np.newaxis, :], enhanced_signal[np.newaxis, :])
 
-    # # Display Results
-    # print(f"PESQ Score: {pesq_score}")
-    # print(f"SI-SNR Score: {si_snr_score} dB")
-    # print(f"STOI Score: {stoi_score}")
-    # print(f"SDR Score: {sdr[0]} dB")
-    # end=time.time()
-    # print(f"Time taken: {end-start} seconds")
-    # print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")
+# # Display Results
+# print(f"PESQ Score: {pesq_score}")
+# print(f"SI-SNR Score: {si_snr_score} dB")
+# print(f"STOI Score: {stoi_score}")
+# print(f"SDR Score: {sdr[0]} dB")
+# end=time.time()
+# print(f"Time taken: {end-start} seconds")
+# print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")
