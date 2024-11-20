@@ -89,7 +89,7 @@ def metrics(reference, enhanced, rate):
     pesq_score = pesq(rate, reference_signal_1, enhanced_signal_1, 'wb')
 
     # SI-SNR
-    si_snr_score = compute_si_snr(reference_signal, enhanced_signal)
+    si_snr_score = abs(compute_si_snr(reference_signal, enhanced_signal))
 
     # STOI
     stoi_score = stoi(reference_signal, enhanced_signal, rate)

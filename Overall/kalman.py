@@ -58,7 +58,7 @@ def compute_si_snr(reference, enhanced):
 
 # Metrics calculation
 def metrics(reference, enhanced, rate):
-    print("\nCalculating Metrics...")
+    # print("\nCalculating Metrics...")
 
     # Convert signals to float for processing
     reference_signal = reference.astype(float)
@@ -73,7 +73,7 @@ def metrics(reference, enhanced, rate):
     # Resampling for PESQ compatibility
     target_rate = 16000  # Target sample rate for PESQ compatibility
     if rate != target_rate:
-        print(f"Resampling from {rate} Hz to {target_rate} Hz for PESQ compatibility...")
+        # print(f"Resampling from {rate} Hz to {target_rate} Hz for PESQ compatibility...")
         reference_signal_1 = resample(reference_signal, int(len(reference_signal) * target_rate / rate))
         enhanced_signal_1 = resample(enhanced_signal, int(len(enhanced_signal) * target_rate / rate))
         rate = target_rate
@@ -89,7 +89,7 @@ def metrics(reference, enhanced, rate):
     pesq_score = pesq(rate, reference_signal_1, enhanced_signal_1, 'wb')
 
     # SI-SNR
-    si_snr_score = compute_si_snr(reference_signal, enhanced_signal)
+    si_snr_score = abs(compute_si_snr(reference_signal, enhanced_signal))
 
     # STOI
     stoi_score = stoi(reference_signal, enhanced_signal, rate)
@@ -99,10 +99,10 @@ def metrics(reference, enhanced, rate):
     
 
     # Display Results
-    print(f"PESQ Score: {pesq_score}")
-    print(f"SI-SNR Score: {si_snr_score:.2f} dB")
-    print(f"STOI Score: {stoi_score:.2f}")
-    print(f"SDR Score: {sdr[0]:.2f} dB")
+    # print(f"PESQ Score: {pesq_score}")
+    # print(f"SI-SNR Score: {si_snr_score:.2f} dB")
+    # print(f"STOI Score: {stoi_score:.2f}")
+    # print(f"SDR Score: {sdr[0]:.2f} dB")
 
     return pesq_score, si_snr_score, stoi_score, sdr[0]
 
@@ -158,7 +158,7 @@ if __name__ == "__main__":
         output_wav = "denoised_audio.wav"  # Replace with your desired output file path
 
         # Call the main function
-        pesq_score, si_snr_score, stoi_score, sdr=main(file, output_wav)
+        pesq_score, si_snr_score, stoi_score, sdr=main(path+file, output_wav)
         end=time.time()
         time_taken+=end-start
         pesq_score_avg+=pesq_score
