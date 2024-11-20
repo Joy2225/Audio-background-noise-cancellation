@@ -17,5 +17,10 @@ data/rnnoise_contributions*
 data/noiseGeneration
 rnnoise.zip
 data/
+<<<<<<< HEAD
+src/scratch.ipynb
+src/detect_noise_type/scratch.ipynb
+=======
 *.gz
 *.tar
+>>>>>>> b297c584821e41213596d24a7f8cac51b5a2c8a2
