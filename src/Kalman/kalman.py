@@ -136,7 +136,7 @@ def main(input_wav, output_wav):
 
 if __name__ == "__main__":
     # Input, output, and reference file paths
-    input_wav = "input_audio.wav"  # Replace with your input file path
+    input_wav = "noisefunkguitare.wav"  # Replace with your input file path
     output_wav = "denoised_audio.wav"  # Replace with your desired output file path
 
     # Call the main function
