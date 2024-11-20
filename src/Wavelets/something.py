@@ -248,6 +248,7 @@ class AudioDeNoise:
 
     def __init__(self, inputFile, wavelet='db4', level=2):
         self.__inputFile = inputFile
+        self.target_rate = SAMPLE_RATE
         self.__noiseProfile = None
         self.wavelet = wavelet
         self.level = level
