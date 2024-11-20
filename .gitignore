@@ -11,10 +11,6 @@ wheels/
 *.wav
 *.flac
 src/RNNnoise/rnnoise
-data/rnnoise_contributions.tar.gz
-src/noiseGeneration/noiseSamples/noised/raw
-<<<<<<< HEAD
-data/rnnoise_contributions
-=======
+data/rnnoise_contributions*
+data/noiseGeneration
 rnnoise.zip
->>>>>>> 1951ae0eb8cd03e6393690e084e17a505200763b
