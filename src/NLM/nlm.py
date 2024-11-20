@@ -61,15 +61,15 @@ def main(input_wav, output_wav, patch_size=512, search_window=1024, h=0.8):
     sf.write(output_wav, denoised_audio, sr)
 
     # Plot and compare
-    plt.figure(figsize=(12, 6))
-    plt.subplot(2, 1, 1)
-    librosa.display.waveshow(audio, sr=sr, alpha=0.5, color='b', label="Original")
-    plt.title("Original Audio")
-    plt.subplot(2, 1, 2)
-    librosa.display.waveshow(denoised_audio, sr=sr, alpha=0.5, color='g', label="Denoised")
-    plt.title("Denoised Audio")
-    plt.tight_layout()
-    plt.show()
+    # plt.figure(figsize=(12, 6))
+    # plt.subplot(2, 1, 1)
+    # librosa.display.waveshow(audio, sr=sr, alpha=0.5, color='b', label="Original")
+    # plt.title("Original Audio")
+    # plt.subplot(2, 1, 2)
+    # librosa.display.waveshow(denoised_audio, sr=sr, alpha=0.5, color='g', label="Denoised")
+    # plt.title("Denoised Audio")
+    # plt.tight_layout()
+    # plt.show()
 
 if __name__ == "__main__":
     # Input and output file paths
