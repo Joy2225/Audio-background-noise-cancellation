@@ -17,3 +17,5 @@ data/rnnoise_contributions*
 data/noiseGeneration
 rnnoise.zip
 data/
+src/scratch.ipynb
+src/detect_noise_type/scratch.ipynb
