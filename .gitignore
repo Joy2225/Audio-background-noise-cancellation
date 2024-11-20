@@ -14,3 +14,4 @@ src/RNNnoise/rnnoise
 data/rnnoise_contributions*
 data/noiseGeneration
 rnnoise.zip
+data/
