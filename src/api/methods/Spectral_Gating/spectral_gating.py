@@ -60,7 +60,7 @@ def spectral_denoising(data, rate):
     # Convert to int16 for WAV output
     reduced_noise = np.int16(reduced_noise / np.max(np.abs(reduced_noise)) * 32767)
     end = time.time()
-    return reduced_noise, {"Execution Time": end - start, "Memory Usage": process.memory_info().rss / 1024 ** 2}
+    return reduced_noise, {"Execution Time(sec)": end - start, "Memory Usage(MB)": process.memory_info().rss / 1024 ** 2}
 
 # Write the result to a file
 # wavfile.write("mywav_reduced_noise.wav", rate, reduced_noise)

@@ -154,7 +154,7 @@ def classify_noise_endpoint():
     try:
         
         denoised_audio, exe_metrics = kalman_filter_denoising(audio)
-        stft_buf_denoised_kl, psd_buf_denoised_kl, mfcc_buf_denoised_kl, freq_kl, _ = plot_graph(denoised_audio, sr, "Kalman")
+        stft_buf_denoised_kl, psd_buf_denoised_kl, mfcc_buf_denoised_kl, waveform_kl, _ = plot_graph(denoised_audio, sr, "Kalman")
         metrics_denoised = metrics(audio, denoised_audio, sr)
         metrics_denoised.update(exe_metrics)
         metrics_denoised_buf_kl = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_kl.csv")
@@ -162,7 +162,7 @@ def classify_noise_endpoint():
         
 
         denoised_audio, exe_metrics = non_local_means_denoising(audio)
-        stft_buf_denoised_nlm, psd_buf_denoised_nlm, mfcc_buf_denoised_nlm, freq_nlm, _ = plot_graph(denoised_audio, sr, "NLM")
+        stft_buf_denoised_nlm, psd_buf_denoised_nlm, mfcc_buf_denoised_nlm, waveform_nlm, _ = plot_graph(denoised_audio, sr, "NLM")
         metrics_denoised = metrics(audio, denoised_audio, sr)
         metrics_denoised.update(exe_metrics)
         metrics_denoised_buf_nlm = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_nlm.csv")
@@ -170,7 +170,7 @@ def classify_noise_endpoint():
 
 
         denoised_audio, exe_metrics = spectral_denoising(audio, sr)
-        stft_buf_denoised_sg, psd_buf_denoised_sg, mfcc_buf_denoised_sg, freq_sg, _ = plot_graph(denoised_audio, sr, "Spectral Gating")        
+        stft_buf_denoised_sg, psd_buf_denoised_sg, mfcc_buf_denoised_sg, waveform_sg, _ = plot_graph(denoised_audio, sr, "Spectral Gating")        
         metrics_denoised = metrics(audio, denoised_audio, sr)
         metrics_denoised.update(exe_metrics)
         metrics_denoised_buf_sg = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_sg.csv")
@@ -178,7 +178,7 @@ def classify_noise_endpoint():
 
         denoiser = AudioDeNoise(audio_data=audio, sr=sr)
         denoised_audio, exe_metrics = denoiser.deNoise()
-        stft_buf_denoised_wv, psd_buf_denoised_wv, mfcc_buf_denoised_wv, freq_wv, _ = plot_graph(denoised_audio, sr, "Wavelet")
+        stft_buf_denoised_wv, psd_buf_denoised_wv, mfcc_buf_denoised_wv, waveform_wv, _ = plot_graph(denoised_audio, sr, "Wavelet")
         metrics_denoised = metrics(audio, denoised_audio, sr)
         metrics_denoised.update(exe_metrics)
         metrics_denoised_buf_wv = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_wv.csv")
@@ -186,7 +186,7 @@ def classify_noise_endpoint():
 
         denoiser = Weiner(audio, sr, 0, 1)
         denoised_audio, exe_metrics = denoiser.weiner()
-        stft_buf_denoised_weiner, psd_buf_denoised_weiner, mfcc_buf_denoised_weiner, freq_weiner, _ = plot_graph(denoised_audio, sr, "Weiner")  
+        stft_buf_denoised_weiner, psd_buf_denoised_weiner, mfcc_buf_denoised_weiner, waveform_weiner, _ = plot_graph(denoised_audio, sr, "Weiner")  
         metrics_denoised = metrics(audio, denoised_audio, sr)
         metrics_denoised.update(exe_metrics)
         metrics_denoised_buf_weiner = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised_weiner.csv")
@@ -205,40 +205,40 @@ def classify_noise_endpoint():
             zf.writestr("stft.png", stft_buf.getvalue())
             zf.writestr("psd.png", psd_buf.getvalue())
             zf.writestr("mfcc.png", mfcc_buf.getvalue())
-            zf.writestr("freq_graph.png", graph_buf.getvalue())
+            zf.writestr("waveform_graph.png", graph_buf.getvalue())
 
             zf.writestr("stft_denoised_kl.png", stft_buf_denoised_kl.getvalue())
             zf.writestr("psd_denoised_kl.png", psd_buf_denoised_kl.getvalue())
             zf.writestr("mfcc_denoised_kl.png", mfcc_buf_denoised_kl.getvalue())
-            zf.writestr("freq_kl.png", freq_kl.getvalue())
+            zf.writestr("waveform_kl.png", waveform_kl.getvalue())
             zf.writestr("denoised_audio_kl.wav", denoised_audio_bytes_kl)
 
             zf.writestr("metrics_denoised_nlm.csv", metrics_denoised_buf_nlm.getvalue())
             zf.writestr("stft_denoised_nlm.png", stft_buf_denoised_nlm.getvalue())
             zf.writestr("psd_denoised_nlm.png", psd_buf_denoised_nlm.getvalue())
             zf.writestr("mfcc_denoised_nlm.png", mfcc_buf_denoised_nlm.getvalue())
-            zf.writestr("freq_nlm.png", freq_nlm.getvalue())
+            zf.writestr("waveform_nlm.png", waveform_nlm.getvalue())
             zf.writestr("denoised_audio_nlm.wav", denoised_audio_bytes_nlm)
 
             zf.writestr("metrics_denoised_sg.csv", metrics_denoised_buf_sg.getvalue())
             zf.writestr("stft_denoised_sg.png", stft_buf_denoised_sg.getvalue())
             zf.writestr("psd_denoised_sg.png", psd_buf_denoised_sg.getvalue())
             zf.writestr("mfcc_denoised_sg.png", mfcc_buf_denoised_sg.getvalue())
-            zf.writestr("freq_sg.png", freq_sg.getvalue())
+            zf.writestr("waveform_sg.png", waveform_sg.getvalue())
             zf.writestr("denoised_audio_sg.wav", denoised_audio_bytes_sg)
 
             zf.writestr("metrics_denoised_wv.csv", metrics_denoised_buf_wv.getvalue())
             zf.writestr("stft_denoised_wv.png", stft_buf_denoised_wv.getvalue())
             zf.writestr("psd_denoised_wv.png", psd_buf_denoised_wv.getvalue())
             zf.writestr("mfcc_denoised_wv.png", mfcc_buf_denoised_wv.getvalue())
-            zf.writestr("freq_wv.png", freq_wv.getvalue())
+            zf.writestr("waveform_wv.png", waveform_wv.getvalue())
             zf.writestr("denoised_audio_wv.wav", denoised_audio_bytes_wv)
 
             zf.writestr("metrics_denoised_weiner.csv", metrics_denoised_buf_weiner.getvalue())
             zf.writestr("stft_denoised_weiner.png", stft_buf_denoised_weiner.getvalue())
             zf.writestr("psd_denoised_weiner.png", psd_buf_denoised_weiner.getvalue())
             zf.writestr("mfcc_denoised_weiner.png", mfcc_buf_denoised_weiner.getvalue())
-            zf.writestr("freq_weiner.png", freq_weiner.getvalue())
+            zf.writestr("waveform_weiner.png", waveform_weiner.getvalue())
             zf.writestr("denoised_audio_weiner.wav", denoised_audio_bytes_weiner)
 
 

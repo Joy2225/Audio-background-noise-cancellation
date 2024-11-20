@@ -111,7 +111,7 @@ def non_local_means_denoising(audio, patch_size=512, search_window=1024, h=0.8):
     # Normalize the weights
     denoised_audio /= np.maximum(weights_sum, 1e-8)
     end = time.time()
-    return denoised_audio, {"Execution Time": end - start, "Memory Usage(MB)": process.memory_info().rss / 1024 ** 2}
+    return denoised_audio, {"Execution Time(sec)": end - start, "Memory Usage(MB)": process.memory_info().rss / 1024 ** 2}
 
 def main(input_wav, output_wav, patch_size=512, search_window=1024, h=0.8):
     """

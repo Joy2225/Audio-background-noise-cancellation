@@ -66,12 +66,12 @@ if st.button("Submit"):
                     st.header("Original Audio")
                     st.subheader("Noise Type:")
                     st.write(noise_type)  # Display noise type
-                    st.subheader("Metrics:")
-                    st.table(metrics_data)
+                    # st.subheader("Metrics:")
+                    # st.table(metrics_data)
 
                     # Display original graphs
                     st.subheader("Original Graphs")
-                    for filename in ["stft.png", "psd.png", "mfcc.png", "freq_graph.png"]:
+                    for filename in ["stft.png", "psd.png", "mfcc.png", "waveform_graph.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
                     # Display kalman denoised audio details
@@ -84,7 +84,7 @@ if st.button("Submit"):
 
                     # Display denoised graphs
                     st.subheader("Kalman Denoised Graphs")
-                    for filename in ["stft_denoised_kl.png", "psd_denoised_kl.png", "mfcc_denoised_kl.png", "freq_kl.png"]:
+                    for filename in ["stft_denoised_kl.png", "psd_denoised_kl.png", "mfcc_denoised_kl.png", "waveform_kl.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
                     
                     # Display NLM denoised audio details
@@ -97,7 +97,7 @@ if st.button("Submit"):
 
                     # Display denoised graphs
                     st.subheader("NLM Denoised Graphs")
-                    for filename in ["stft_denoised_nlm.png", "psd_denoised_nlm.png", "mfcc_denoised_nlm.png", "freq_nlm.png"]:
+                    for filename in ["stft_denoised_nlm.png", "psd_denoised_nlm.png", "mfcc_denoised_nlm.png", "waveform_nlm.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
                     
                     # Display SG denoised audio details
@@ -110,7 +110,7 @@ if st.button("Submit"):
 
                     # Display denoised graphs
                     st.subheader("Spectral Gating Denoised Graphs")
-                    for filename in ["stft_denoised_sg.png", "psd_denoised_sg.png", "mfcc_denoised_sg.png", "freq_sg.png"]:
+                    for filename in ["stft_denoised_sg.png", "psd_denoised_sg.png", "mfcc_denoised_sg.png", "waveform_sg.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
                     # Display Wavelet denoised audio details
@@ -123,7 +123,7 @@ if st.button("Submit"):
 
                     # Display denoised graphs
                     st.subheader("Wavelet Denoised Graphs")
-                    for filename in ["stft_denoised_wv.png", "psd_denoised_wv.png", "mfcc_denoised_wv.png", "freq_wv.png"]:
+                    for filename in ["stft_denoised_wv.png", "psd_denoised_wv.png", "mfcc_denoised_wv.png", "waveform_wv.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
                     #Display weiner denoised audio details
@@ -136,7 +136,7 @@ if st.button("Submit"):
 
                     # Display denoised graphs
                     st.subheader("weiner Denoised Graphs")
-                    for filename in ["stft_denoised_weiner.png", "psd_denoised_weiner.png", "mfcc_denoised_weiner.png", "freq_weiner.png"]:
+                    for filename in ["stft_denoised_weiner.png", "psd_denoised_weiner.png", "mfcc_denoised_weiner.png", "waveform_weiner.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
             else:

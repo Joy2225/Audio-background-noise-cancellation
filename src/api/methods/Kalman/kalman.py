@@ -47,7 +47,7 @@ def kalman_filter_denoising(audio, process_noise=1e-5, measurement_noise=1e-2):
         denoised_audio[i] = x_hat
     end = time.time()
 
-    return denoised_audio, {"Execution Time": end - start, "Memory Usage(MB)": process.memory_info().rss / 1024 ** 2}
+    return denoised_audio, {"Execution Time(sec)": end - start, "Memory Usage(MB)": process.memory_info().rss / 1024 ** 2}
 
 # SI-SNR computation
 def compute_si_snr(reference, enhanced):

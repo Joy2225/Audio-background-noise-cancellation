@@ -146,7 +146,7 @@ class Weiner:
         # Save enhanced audio as 16-bit PCM
         # wav.write(self.WAV_FILE + '_wiener.wav', self.FS, (s_est * 32767).astype(np.int16))
         end = time.time()
-        return (s_est * 32767).astype(np.int16), {"Execution Time": end - self.start, "Memory Usage(MB)": self.process.memory_info().rss / 1024 ** 2}
+        return (s_est * 32767).astype(np.int16), {"Execution Time(sec)": end - self.start, "Memory Usage(MB)": self.process.memory_info().rss / 1024 ** 2}
 
 
 # Main Script

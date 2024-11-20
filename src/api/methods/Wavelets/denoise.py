@@ -616,7 +616,7 @@ class AudioDeNoise:
         # Reconstruct the clean signal
         clean_audio = pywt.waverec(coefficients, self.wavelet, mode="per")
         end = time.time()
-        return clean_audio.astype(np.float32), {"Execution Time": end - start, "Memory Usage": process.memory_info().rss / 1024 ** 2}
+        return clean_audio.astype(np.float32), {"Execution Time(sec)": end - start, "Memory Usage(MB)": process.memory_info().rss / 1024 ** 2}
         # # Resample if needed for PESQ compatibility
         # if rate != self.target_rate:
         #     print(f"Resampling from {rate} Hz to {self.target_rate} Hz for PESQ compatibility...")
