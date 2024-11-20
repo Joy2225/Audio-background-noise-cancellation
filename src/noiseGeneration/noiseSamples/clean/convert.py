@@ -21,6 +21,6 @@ def convert_flac_to_wav_bulk(input_directory, output_directory):
 
 # Example usage
 input_dir = "flac"  # Input directory containing FLAC files
-output_dir = "wav_files"  # Output directory for WAV files
+output_dir = "wav"  # Output directory for WAV files
 
 convert_flac_to_wav_bulk(input_dir, output_dir)
