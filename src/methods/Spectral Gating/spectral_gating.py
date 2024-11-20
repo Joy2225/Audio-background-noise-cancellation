@@ -29,7 +29,7 @@ def compute_si_snr(reference, enhanced):
 
 
 # Load data
-rate, data = wavfile.read("noisefunkguitare.wav")
+rate, data = wavfile.read("vega_pinkr17_16.wav")
 print(f"Sample rate: {rate}, Data shape: {data.shape}")
 
 # Convert to mono if audio is stereo

@@ -17,3 +17,5 @@ data/rnnoise_contributions*
 data/noiseGeneration
 rnnoise.zip
 data/
+*.gz
+*.tar
