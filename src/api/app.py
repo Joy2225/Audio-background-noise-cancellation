@@ -8,8 +8,17 @@ import tempfile
 import soundfile as sf
 import zipfile
 
+# from main import app
+app = Flask(__name__)
+@app.route("/classify_noise", methods=["POST"])
+def classify_noise_endpoint():
+    # Step 1: Validate file upload
+    if "file" not in request.files:
+        return jsonify({"error": "No file part"}), 400
 
-def plot(audio_file):
+    audio_file = request.files["file"]
+
+    # Step 2: Load the audio file using librosa
     audio, sr = librosa.load(audio_file, sr=None)
     audio = audio / np.max(np.abs(audio))
 
@@ -24,13 +33,8 @@ def plot(audio_file):
     stft_buf = plot_stft(stft_db, sr)
     psd_buf = plot_psd(freqs, psd)
     mfcc_buf = plot_mfcc(mfccs, sr)
-    return stft_buf, psd_buf, mfcc_buf
 
 
-def noise_type(audio_file):
-    audio, sr = librosa.load(audio_file, sr=None)
-    audio = audio / np.max(np.abs(audio))
-    freqs, psd = welch(audio, fs=sr, nperseg=1024)
     # Log-log scale for linear fitting
     log_freqs = np.log10(freqs[1:])  # Skip 0 Hz to avoid log(0)
     log_psd = np.log10(psd[1:])
@@ -55,21 +59,6 @@ def noise_type(audio_file):
         noise_type = "Velvet Noise" 
     else:
         noise_type = "Unknown"
-    return noise_type
-
-# from main import app
-app = Flask(__name__)
-@app.route("/classify_noise", methods=["POST"])
-def classify_noise_endpoint():
-    # Step 1: Validate file upload
-    if "file" not in request.files:
-        return jsonify({"error": "No file part"}), 400
-
-    audio_file = request.files["file"]
-
-    stft_buf, psd_buf, mfcc_buf = plot(audio_file)
-    noise_type = noise_type(audio_file)
-    
 
     # Step 5: Create a zip file containing all the graphs
     zip_buffer = io.BytesIO()
