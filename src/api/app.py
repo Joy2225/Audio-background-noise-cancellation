@@ -78,7 +78,7 @@ def metrics(reference, enhanced, rate):
 
 
 
-def plot_graph(audio,sr):
+def plot_graph(audio,sr,filee):
     # audio, sr = librosa.load(audio_file, sr=None)
     audio = audio / np.max(np.abs(audio))
 
@@ -91,7 +91,7 @@ def plot_graph(audio,sr):
     stft_buf = plot_stft(stft_db, sr)
     psd_buf = plot_psd(freqs, psd)
     mfcc_buf = plot_mfcc(mfccs, sr)
-    graph_buf = plot_freq(audio, sr)
+    graph_buf = plot_freq(audio, sr, filee)
 
     log_freqs = np.log10(freqs[1:])  # Skip 0 Hz to avoid log(0)
     log_psd = np.log10(psd[1:])
@@ -119,6 +119,15 @@ def plot_graph(audio,sr):
         
     return stft_buf, psd_buf, mfcc_buf, graph_buf, noise_type
 
+def save_audio_to_bytes(audio, sr):
+    # Create a bytes buffer
+    with io.BytesIO() as audio_buffer:
+        # Write audio data as WAV file to the buffer
+        sf.write(audio_buffer, audio, sr, format='wav')
+        # Get the value of the buffer
+        audio_bytes = audio_buffer.getvalue()
+    return audio_bytes
+
 def save_metrics_to_csv(metrics_dict, noise_type, filename):
     metrics_dict["Noise Type"] = [noise_type]
     metrics_df = pd.DataFrame(metrics_dict)
@@ -135,13 +144,14 @@ def classify_noise_endpoint():
 
     audio_file = request.files["file"]
     audio, sr = librosa.load(audio_file, sr=None)
-    stft_buf, psd_buf, mfcc_buf, graph_buf, noise_type = plot_graph(audio, sr)
+    stft_buf, psd_buf, mfcc_buf, graph_buf, noise_type = plot_graph(audio, sr,"original")
     try:
         
         denoised_audio = kalman_filter_denoising(audio)
-        stft_buf_denoised_kl, psd_buf_denoised_kl, mfcc_buf_denoised_kl, freq_kl, _ = plot_graph(denoised_audio, sr)
+        stft_buf_denoised_kl, psd_buf_denoised_kl, mfcc_buf_denoised_kl, freq_kl, _ = plot_graph(denoised_audio, sr, "Kalman")
         metrics_denoised = metrics(audio, denoised_audio, sr)
         metrics_denoised_buf = save_metrics_to_csv(metrics_denoised, noise_type, "metrics_denoised.csv")
+        denoised_audio_bytes = save_audio_to_bytes(denoised_audio, sr)
         
         
         
@@ -153,12 +163,12 @@ def classify_noise_endpoint():
             zf.writestr("stft.png", stft_buf.getvalue())
             zf.writestr("psd.png", psd_buf.getvalue())
             zf.writestr("mfcc.png", mfcc_buf.getvalue())
-            zf.writestr("mfcc.png", graph_buf.getvalue())
+            zf.writestr("freq_graph.png", graph_buf.getvalue())
             zf.writestr("stft_denoised_kl.png", stft_buf_denoised_kl.getvalue())
             zf.writestr("psd_denoised_kl.png", psd_buf_denoised_kl.getvalue())
             zf.writestr("mfcc_denoised_kl.png", mfcc_buf_denoised_kl.getvalue())
             zf.writestr("freq_kl.png", freq_kl.getvalue())
-            zf.writestr("denoised_audio_kl.wav", denoised_audio)
+            zf.writestr("denoised_audio_kl.wav", denoised_audio_bytes)
 
         zip_buffer.seek(0)
 

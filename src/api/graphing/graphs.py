@@ -55,10 +55,10 @@ def plot_mfcc(mfccs, sr):
         plt.colorbar(label="MFCC Coefficients")
     return save_plot_to_buffer(plot)
 
-def plot_freq(audio,sr):
+def plot_freq(audio,sr,filee):
     def plot():
         plt.figure(figsize=(12, 6))
         librosa.display.waveshow(audio, sr=sr, alpha=0.5, color='b', label="Original")
-        plt.title("Original Audio")
+        plt.title(f"{filee} Audio")
         plt.tight_layout()
     return save_plot_to_buffer(plot)

@@ -60,6 +60,8 @@ if st.button("Submit"):
                     metrics_data = pd.read_csv(zf.open("metrics_denoised.csv"))
                     noise_type = metrics_data.iloc[0]["Noise Type"]
 
+                    
+
                     # Display original audio details
                     st.header("Original Audio")
                     st.subheader("Noise Type:")
@@ -69,12 +71,14 @@ if st.button("Submit"):
 
                     # Display original graphs
                     st.subheader("Original Graphs")
-                    for filename in ["stft.png", "psd.png", "mfcc.png"]:
+                    for filename in ["stft.png", "psd.png", "mfcc.png", "freq_graph.png"]:
                         st.image(zf.read(filename), caption=filename.split(".")[0], use_container_width=True)
 
                     # Display denoised audio details
                     st.header("Kalman Denoised Audio")
-                    st.audio(BytesIO(zf.read("denoised_audio.wav")), format="audio/wav")
+                    with zf.open("denoised_audio_kl.wav") as audio_file:
+                        audio_data = audio_file.read()
+                        st.audio(data=audio_data, format="audio/wav")
                     st.subheader("Metrics:")
                     st.table(pd.read_csv(zf.open("metrics_denoised.csv")))
 
