@@ -13,3 +13,4 @@ wheels/
 src/RNNnoise/rnnoise
 data/rnnoise_contributions.tar.gz
 src/noiseGeneration/noiseSamples/noised/raw
+data/rnnoise_contributions
